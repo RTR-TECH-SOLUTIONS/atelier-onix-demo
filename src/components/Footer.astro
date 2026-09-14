@@ -1,0 +1,65 @@
+---
+import { CATEGORIES } from "../data/products";
+import { u } from "../lib/url";
+---
+<footer class="mt-20 lg:mt-28 bg-jade-deep text-surface-2">
+  <div class="u-wrap py-14 lg:py-18 grid gap-10 lg:gap-14 md:grid-cols-2 lg:grid-cols-4">
+
+    <div>
+      <p class="font-[family-name:var(--font-display)] text-[19px] tracking-[0.16em] uppercase text-white leading-none">Atelier Onix</p>
+      <p class="mt-4 text-[14.5px] leading-relaxed text-surface-2/80 max-w-[34ch]">
+        Aducem onix din cariera Chagai și îl prelucrăm în atelierul din Ilfov. Vaze, sfeșnice, sculpturi și obiecte de masă, tăiate bucată cu bucată.
+      </p>
+      <p class="mt-5 text-[13px] text-surface-2/70">
+        Showroom: Str. Pietrei 14, Otopeni<br />
+        Luni-Vineri 09:00-18:00 · Sâmbătă 10:00-14:00
+      </p>
+    </div>
+
+    <nav aria-label="Catalog">
+      <p class="u-eyebrow text-surface-2/60 mb-4">Catalog</p>
+      <ul class="flex flex-col gap-2.5 text-[14.5px]">
+        {CATEGORIES.map((c) => (
+          <li><a href={u(`/colectie?cat=${c.slug}`)} class="hover:text-white transition-colors">{c.label}</a></li>
+        ))}
+        <li><a href={u("/cadouri-corporate")} class="hover:text-white transition-colors">Cadouri corporate</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Informații">
+      <p class="u-eyebrow text-surface-2/60 mb-4">Informații</p>
+      <ul class="flex flex-col gap-2.5 text-[14.5px]">
+        <li><a href={u("/piatra")} class="hover:text-white transition-colors">Despre piatră</a></li>
+        <li><a href={u("/livrare")} class="hover:text-white transition-colors">Livrare și montaj</a></li>
+        <li><a href={u("/retur")} class="hover:text-white transition-colors">Retur în 14 zile</a></li>
+        <li><a href={u("/intretinere")} class="hover:text-white transition-colors">Întreținerea onixului</a></li>
+        <li><a href={u("/contact")} class="hover:text-white transition-colors">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <p class="u-eyebrow text-surface-2/60 mb-4">Vorbim direct</p>
+      <a href="tel:+40722319593" class="block font-[family-name:var(--font-display)] text-[22px] text-white hover:text-surface-2 transition-colors">0722 319 593</a>
+      <p class="mt-1 text-[13px] text-surface-2/70">Luni-Vineri, 09:00-18:00</p>
+      <a href="https://wa.me/40722319593" class="u-btn u-btn--ghost mt-5 !border-surface-2/40 !text-surface-2 hover:!border-white hover:!text-white">
+        Scrie pe WhatsApp
+      </a>
+      <p class="mt-6 text-[13px] text-surface-2/70">
+        Pentru o piesă anume sau o comandă mare, cereți ofertă. Răspundem în aceeași zi lucrătoare.
+      </p>
+    </div>
+  </div>
+
+  <div class="border-t border-white/12">
+    <div class="u-wrap py-6 flex flex-col-reverse md:flex-row md:items-center md:justify-between gap-4 text-[12.5px] text-surface-2/65">
+      <p>&copy; {new Date().getFullYear()} Atelier Onix SRL · CUI 00000000 · J00/000/2008</p>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <a href={u("/termeni")} class="hover:text-white transition-colors">Termeni</a>
+        <a href={u("/confidentialitate")} class="hover:text-white transition-colors">Confidențialitate</a>
+        <a href={u("/cookies")} class="hover:text-white transition-colors">Cookies</a>
+        <a href="https://anpc.ro" class="hover:text-white transition-colors">ANPC</a>
+        <a href="https://ec.europa.eu/consumers/odr" class="hover:text-white transition-colors">SOL</a>
+      </div>
+    </div>
+  </div>
+</footer>

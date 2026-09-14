@@ -1,0 +1,150 @@
+---
+// Coș demo: starea trăiește în localStorage, fără backend.
+// TODO(real): înlocuit cu Medusa cart API (sau Supabase + Stripe Checkout).
+import { u } from "../lib/url";
+---
+<div id="cart-backdrop" hidden class="fixed inset-0 z-50 bg-ink/45"></div>
+
+<aside id="cart-drawer" hidden aria-label="Coșul meu"
+  class="fixed top-0 right-0 z-50 h-dvh w-full max-w-[420px] bg-ground border-l border-line flex flex-col">
+
+  <div class="flex items-center justify-between gap-4 px-5 py-4 border-b border-line">
+    <h2 class="font-[family-name:var(--font-display)] text-[19px]">Coșul tău</h2>
+    <button type="button" id="cart-close" class="-mr-2 p-2 text-ink-soft hover:text-ink transition-colors" aria-label="Închide coșul">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+        <path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="cart-items" class="flex-1 overflow-y-auto px-5 py-4"></div>
+
+  <div id="cart-foot" class="border-t border-line px-5 py-4 flex flex-col gap-3">
+    <div class="flex items-baseline justify-between">
+      <span class="text-[14px] text-ink-soft">Total</span>
+      <span id="cart-total" class="u-price text-[20px] tabular-nums">0,00 Lei</span>
+    </div>
+    <p id="cart-ship" class="text-[12.5px] text-ink-faint"></p>
+    <button type="button" class="u-btn u-btn--solid w-full" id="cart-checkout">Finalizează comanda</button>
+    <p class="text-[12px] text-ink-faint text-center">Plată cu cardul sau ramburs. Retur în 14 zile.</p>
+  </div>
+</aside>
+
+<script>
+  type Line = { slug: string; name: string; price: number; image: string; qty: number };
+  const BASE = document.documentElement.dataset.base ?? "";
+  const KEY = "ao-cart";
+  const lei = (n: number) => n.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " Lei";
+
+  const read = (): Line[] => {
+    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; }
+  };
+  const write = (lines: Line[]) => {
+    try { localStorage.setItem(KEY, JSON.stringify(lines)); } catch {}
+    render();
+  };
+
+  const drawer = document.getElementById("cart-drawer") as HTMLElement | null;
+  const backdrop = document.getElementById("cart-backdrop") as HTMLElement | null;
+  const itemsEl = document.getElementById("cart-items");
+  const totalEl = document.getElementById("cart-total");
+  const shipEl = document.getElementById("cart-ship");
+  const countEl = document.getElementById("cart-count");
+  const footEl = document.getElementById("cart-foot");
+
+  function render() {
+    const lines = read();
+    const total = lines.reduce((s, l) => s + l.price * l.qty, 0);
+    const units = lines.reduce((s, l) => s + l.qty, 0);
+
+    if (countEl) { countEl.textContent = String(units); countEl.hidden = units === 0; }
+    if (totalEl) totalEl.textContent = lei(total);
+    if (footEl) footEl.hidden = units === 0;
+
+    if (shipEl) {
+      const left = 900 - total;
+      shipEl.textContent = left > 0
+        ? `Mai adaugă ${lei(left)} pentru transport gratuit.`
+        : "Transport gratuit inclus.";
+    }
+
+    if (!itemsEl) return;
+    if (!lines.length) {
+      itemsEl.innerHTML = `<p class="text-[14.5px] text-ink-soft py-8 text-center">Coșul e gol.<br><a href={u("/colectie")} class="text-jade underline underline-offset-4 mt-2 inline-block">Vezi catalogul</a></p>`;
+      return;
+    }
+    itemsEl.innerHTML = lines.map((l) => `
+      <div class="flex gap-3 py-4 border-b border-line last:border-0">
+        <img src="${l.image}" alt="" width="72" height="90" loading="lazy" class="w-[72px] h-[90px] object-cover bg-surface shrink-0" style="border-radius:var(--radius-stone)">
+        <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+          <p class="text-[13.5px] leading-snug">${l.name}</p>
+          <p class="u-price text-[15px] tabular-nums">${lei(l.price * l.qty)}</p>
+          <div class="mt-auto flex items-center gap-3">
+            <div class="flex items-center border border-line" style="border-radius:var(--radius-stone)">
+              <button type="button" data-dec="${l.slug}" class="w-7 h-7 grid place-items-center text-ink-soft hover:text-ink" aria-label="Scade cantitatea">−</button>
+              <span class="w-6 text-center text-[13px] tabular-nums">${l.qty}</span>
+              <button type="button" data-inc="${l.slug}" class="w-7 h-7 grid place-items-center text-ink-soft hover:text-ink" aria-label="Crește cantitatea">+</button>
+            </div>
+            <button type="button" data-del="${l.slug}" class="text-[12.5px] text-ink-faint hover:text-sale underline underline-offset-2">Scoate</button>
+          </div>
+        </div>
+      </div>`).join("");
+  }
+
+  function open() {
+    if (drawer) drawer.hidden = false;
+    if (backdrop) backdrop.hidden = false;
+    document.body.style.overflow = "hidden";
+    document.getElementById("cart-close")?.focus();
+  }
+  function close() {
+    if (drawer) drawer.hidden = true;
+    if (backdrop) backdrop.hidden = true;
+    document.body.style.overflow = "";
+  }
+
+  document.getElementById("cart-open")?.addEventListener("click", open);
+  document.getElementById("cart-close")?.addEventListener("click", close);
+  backdrop?.addEventListener("click", close);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && drawer && !drawer.hidden) close(); });
+
+  itemsEl?.addEventListener("click", (e) => {
+    const el = e.target as HTMLElement;
+    const lines = read();
+    const inc = el.dataset.inc, dec = el.dataset.dec, del = el.dataset.del;
+    if (inc) { const l = lines.find((x) => x.slug === inc); if (l) l.qty++; write(lines); }
+    else if (dec) { const l = lines.find((x) => x.slug === dec); if (l) l.qty--; write(lines.filter((x) => x.qty > 0)); }
+    else if (del) { write(lines.filter((x) => x.slug !== del)); }
+  });
+
+  document.getElementById("cart-checkout")?.addEventListener("click", () => {
+    window.location.href = BASE + "/checkout";
+  });
+
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-add-to-cart]");
+    if (!btn) return;
+    const lines = read();
+    const slug = btn.dataset.slug!;
+    const found = lines.find((l) => l.slug === slug);
+    if (found) found.qty++;
+    else lines.push({ slug, name: btn.dataset.name!, price: Number(btn.dataset.price), image: btn.dataset.image!, qty: 1 });
+    write(lines);
+
+    // pe card confirmăm pe loc și nu întrerupem răsfoirea;
+    // de pe pagina produsului deschidem coșul, pentru că acolo e finalul deciziei
+    const label = btn.dataset.label;
+    if (label) {
+      btn.textContent = "Adăugat în coș";
+      btn.classList.add("!border-jade", "!text-jade");
+      window.setTimeout(() => {
+        btn.textContent = label;
+        btn.classList.remove("!border-jade", "!text-jade");
+      }, 1800);
+    } else {
+      open();
+    }
+  });
+
+  render();
+</script>

@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Atelier Onix — design tokens
+   Paleta e extrasă din marfă: onix verde, vinișoară de caramel,
+   alamă. Un singur accent (verde), alama doar pe preț.
+   ============================================================ */
+@theme {
+  --color-ground: #FBFBF8;
+  --color-surface: #F3F3EE;
+  --color-surface-2: #E8E9E1;
+  --color-ink: #14170F;
+  --color-ink-soft: #52584A;
+  --color-ink-faint: #858A7A;
+  --color-line: #E0E1D8;
+  --color-line-strong: #C9CBBE;
+  --color-jade: #4E6548;
+  --color-jade-deep: #2F3F2C;
+  --color-brass: #8E7334;
+  --color-sale: #9B3B2F;
+
+  --font-display: "Spectral", Georgia, "Times New Roman", serif;
+  --font-sans: "Karla", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-stone: 2px;
+}
+
+:root {
+  --header-h: 148px;
+}
+@media (max-width: 1023px) {
+  :root { --header-h: 108px; }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+img { display: block; max-width: 100%; }
+
+:focus-visible {
+  outline: 2px solid var(--color-jade);
+  outline-offset: 3px;
+}
+
+/* utilitare proprii ------------------------------------------ */
+@layer components {
+  .u-wrap { width: 100%; max-width: 1360px; margin-inline: auto; padding-inline: 20px; }
+  @media (min-width: 768px) { .u-wrap { padding-inline: 32px; } }
+
+  .u-eyebrow {
+    font-size: .68rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  .u-nav-link {
+    font-size: .78rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* buton principal: muchii aproape drepte, ca piatra tăiată */
+  .u-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: .85rem 1.6rem;
+    border-radius: var(--radius-stone);
+    font-size: .78rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: background-color .18s ease-out, color .18s ease-out, border-color .18s ease-out;
+    cursor: pointer;
+  }
+  .u-btn--solid { background: var(--color-ink); color: var(--color-ground); border: 1px solid var(--color-ink); }
+  .u-btn--solid:hover { background: var(--color-jade-deep); border-color: var(--color-jade-deep); }
+  .u-btn--ghost { background: transparent; color: var(--color-ink); border: 1px solid var(--color-line-strong); }
+  .u-btn--ghost:hover { border-color: var(--color-ink); }
+
+  .u-price { font-family: var(--font-display); font-size: 1.1rem; color: var(--color-ink); }
+  .u-price--old { color: var(--color-ink-faint); text-decoration: line-through; font-size: .92rem; margin-right: .45rem; }
+
+  /* linie de vinișoară — separator care citează materialul */
+  .u-vein {
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%, var(--color-line-strong) 12%,
+      var(--color-brass) 34%, var(--color-line-strong) 52%,
+      var(--color-brass) 71%, var(--color-line-strong) 88%, transparent 100%);
+    opacity: .55;
+  }
+}

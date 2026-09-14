@@ -1,0 +1,432 @@
+---
+import Layout from "../layouts/Layout.astro";
+// Demo: coșul vine din localStorage, nimic nu se trimite undeva.
+// TODO(real): Medusa cart + Stripe Checkout (card) și Netopia pentru plata locală.
+const JUDETE = ["Alba","Arad","Argeș","Bacău","Bihor","Bistrița-Năsăud","Botoșani","Brăila","Brașov","București","Buzău","Călărași","Caraș-Severin","Cluj","Constanța","Covasna","Dâmbovița","Dolj","Galați","Giurgiu","Gorj","Harghita","Hunedoara","Ialomița","Iași","Ilfov","Maramureș","Mehedinți","Mureș","Neamț","Olt","Prahova","Sălaj","Satu Mare","Sibiu","Suceava","Teleorman","Timiș","Tulcea","Vâlcea","Vaslui","Vrancea"];
+import { u } from "../lib/url";
+---
+<Layout title="Finalizare comandă | Atelier Onix" description="Finalizează comanda: date de livrare, metodă de transport și plată.">
+
+  <div class="u-wrap pt-6 pb-16 lg:pb-24">
+
+    <nav aria-label="Firimituri" class="text-[12.5px] text-ink-soft">
+      <a href={u("/colectie")} class="hover:text-ink transition-colors">Catalog</a>
+      <span class="mx-1.5 text-ink-faint">/</span><span class="text-ink">Finalizare comandă</span>
+    </nav>
+    <h1 class="mt-3 text-[clamp(1.7rem,3.4vw,2.35rem)]">Finalizare comandă</h1>
+
+    <!-- pași -->
+    <ol class="mt-7 flex items-center gap-2 sm:gap-4 text-[13px]" aria-label="Pașii comenzii">
+      {["Date", "Livrare", "Plată"].map((s, i) => (
+        <li class="step flex items-center gap-2 sm:gap-4" data-step={i + 1}>
+          <span class="flex items-center gap-2">
+            <span class="dot grid place-items-center w-6 h-6 border border-line-strong text-[12px] tabular-nums text-ink-faint transition-colors" style="border-radius:50%">{i + 1}</span>
+            <span class="lbl text-ink-faint transition-colors">{s}</span>
+          </span>
+          {i < 2 && <span class="w-6 sm:w-12 h-px bg-line-strong" aria-hidden="true"></span>}
+        </li>
+      ))}
+    </ol>
+
+    <div id="ck-empty" hidden class="mt-14 text-center">
+      <p class="text-[16px] text-ink-soft">Coșul e gol, nu avem ce finaliza.</p>
+      <a href={u("/colectie")} class="u-btn u-btn--solid mt-5">Vezi catalogul</a>
+    </div>
+
+    <div id="ck-body" class="mt-8 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,382px)] gap-8 lg:gap-14 items-start">
+
+      <!-- ===================== formular pe pași ===================== -->
+      <form id="ck-form" novalidate class="flex flex-col gap-6">
+
+        <!-- pasul 1 -->
+        <section id="ck-1" class="ck-panel flex flex-col gap-5">
+          <div class="flex items-center justify-between gap-4">
+            <h2 class="text-[1.3rem]">Datele tale</h2>
+            <p class="text-[13px] text-ink-soft">Ai cont? <a href={u("/cont")} class="text-jade underline underline-offset-4">Intră în cont</a></p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label for="ck-name" class="text-[13px] text-ink-soft">Nume și prenume</label>
+              <input id="ck-name" name="name" required autocomplete="name" class="ck-in" />
+              <p class="err text-[12.5px] text-sale" hidden></p>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="ck-phone" class="text-[13px] text-ink-soft">Telefon</label>
+              <input id="ck-phone" name="phone" type="tel" required autocomplete="tel" placeholder="07xx xxx xxx" class="ck-in" />
+              <p class="err text-[12.5px] text-sale" hidden></p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="ck-email" class="text-[13px] text-ink-soft">E-mail</label>
+            <input id="ck-email" name="email" type="email" required autocomplete="email" placeholder="adresa@exemplu.ro" class="ck-in" />
+            <p class="err text-[12.5px] text-sale" hidden></p>
+            <p class="text-[12.5px] text-ink-faint">Aici trimitem confirmarea și factura.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-[minmax(0,1fr)_minmax(0,180px)] gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label for="ck-city" class="text-[13px] text-ink-soft">Localitate</label>
+              <input id="ck-city" name="city" required autocomplete="address-level2" class="ck-in" />
+              <p class="err text-[12.5px] text-sale" hidden></p>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="ck-county" class="text-[13px] text-ink-soft">Județ</label>
+              <select id="ck-county" name="county" required class="ck-in">
+                <option value="">Alege</option>
+                {JUDETE.map((j) => <option value={j}>{j}</option>)}
+              </select>
+              <p class="err text-[12.5px] text-sale" hidden></p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="ck-addr" class="text-[13px] text-ink-soft">Stradă, număr, bloc, apartament</label>
+            <input id="ck-addr" name="address" required autocomplete="street-address" class="ck-in" />
+            <p class="err text-[12.5px] text-sale" hidden></p>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="ck-note" class="text-[13px] text-ink-soft">Observații pentru curier <span class="text-ink-faint">(opțional)</span></label>
+            <textarea id="ck-note" name="note" rows="2" class="ck-in leading-relaxed" placeholder="Interfon, etaj, interval orar potrivit..."></textarea>
+          </div>
+
+          <button type="button" data-next="2" class="u-btn u-btn--solid self-start">Continuă spre livrare</button>
+        </section>
+
+        <!-- pasul 2 -->
+        <section id="ck-2" hidden class="ck-panel flex flex-col gap-5">
+          <h2 class="text-[1.3rem]">Cum livrăm</h2>
+
+          <div class="flex flex-col gap-3" role="radiogroup" aria-label="Metodă de livrare">
+            <label class="ship-opt flex gap-3.5 border border-line-strong p-4 cursor-pointer hover:border-ink transition-colors" style="border-radius:var(--radius-stone)">
+              <input type="radio" name="ship" value="curier" data-cost="35" class="accent-[var(--color-jade)] mt-1 shrink-0" checked />
+              <span class="flex-1 min-w-0">
+                <span class="flex flex-wrap items-baseline justify-between gap-x-3">
+                  <span class="text-[15px] font-medium">Curier, cu asigurare</span>
+                  <span class="ship-price u-price text-[15px] tabular-nums">35,00 Lei</span>
+                </span>
+                <span class="block mt-1 text-[13.5px] text-ink-soft">2-4 zile lucrătoare. Ambalare în spumă turnată, asigurat la valoarea comenzii.</span>
+              </span>
+            </label>
+
+            <label class="ship-opt flex gap-3.5 border border-line-strong p-4 cursor-pointer hover:border-ink transition-colors" style="border-radius:var(--radius-stone)">
+              <input type="radio" name="ship" value="rapid" data-cost="65" class="accent-[var(--color-jade)] mt-1 shrink-0" />
+              <span class="flex-1 min-w-0">
+                <span class="flex flex-wrap items-baseline justify-between gap-x-3">
+                  <span class="text-[15px] font-medium">Curier rapid</span>
+                  <span class="ship-price u-price text-[15px] tabular-nums">65,00 Lei</span>
+                </span>
+                <span class="block mt-1 text-[13.5px] text-ink-soft">A doua zi lucrătoare, pentru comenzi plasate până la ora 13:00.</span>
+              </span>
+            </label>
+
+            <label class="ship-opt flex gap-3.5 border border-line-strong p-4 cursor-pointer hover:border-ink transition-colors" style="border-radius:var(--radius-stone)">
+              <input type="radio" name="ship" value="showroom" data-cost="0" class="accent-[var(--color-jade)] mt-1 shrink-0" />
+              <span class="flex-1 min-w-0">
+                <span class="flex flex-wrap items-baseline justify-between gap-x-3">
+                  <span class="text-[15px] font-medium">Ridicare din showroom</span>
+                  <span class="u-price text-[15px] text-jade">Gratuit</span>
+                </span>
+                <span class="block mt-1 text-[13.5px] text-ink-soft">Str. Pietrei 14, Otopeni. Te sunăm când piesa e împachetată.</span>
+              </span>
+            </label>
+          </div>
+
+          <label class="flex items-start gap-2.5 text-[14px] leading-snug cursor-pointer border-t border-line pt-5">
+            <input type="checkbox" id="ck-gift" name="gift" class="accent-[var(--color-jade)] w-3.5 h-3.5 mt-0.5 shrink-0" />
+            <span>Împachetare cadou și felicitare scrisă de mână <span class="text-ink-faint">(+25 lei)</span></span>
+          </label>
+          <div id="ck-gift-text" hidden class="flex flex-col gap-1.5 -mt-1">
+            <label for="ck-gift-msg" class="text-[13px] text-ink-soft">Ce scriem pe felicitare</label>
+            <textarea id="ck-gift-msg" name="giftMsg" rows="2" maxlength="180" class="ck-in leading-relaxed" placeholder="Maximum 180 de caractere."></textarea>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button type="button" data-next="3" class="u-btn u-btn--solid">Continuă spre plată</button>
+            <button type="button" data-back="1" class="u-btn u-btn--ghost">Înapoi</button>
+          </div>
+        </section>
+
+        <!-- pasul 3 -->
+        <section id="ck-3" hidden class="ck-panel flex flex-col gap-5">
+          <h2 class="text-[1.3rem]">Cum plătești</h2>
+
+          <div class="flex flex-col gap-3" role="radiogroup" aria-label="Metodă de plată">
+            <label class="pay-opt flex gap-3.5 border border-line-strong p-4 cursor-pointer hover:border-ink transition-colors" style="border-radius:var(--radius-stone)">
+              <input type="radio" name="pay" value="card" class="accent-[var(--color-jade)] mt-1 shrink-0" checked />
+              <span class="flex-1 min-w-0">
+                <span class="text-[15px] font-medium">Card bancar</span>
+                <span class="block mt-1 text-[13.5px] text-ink-soft">Te ducem pe pagina securizată a procesatorului. Datele cardului nu trec prin acest site.</span>
+              </span>
+            </label>
+
+            <label class="pay-opt flex gap-3.5 border border-line-strong p-4 cursor-pointer hover:border-ink transition-colors" style="border-radius:var(--radius-stone)">
+              <input type="radio" name="pay" value="ramburs" class="accent-[var(--color-jade)] mt-1 shrink-0" />
+              <span class="flex-1 min-w-0">
+                <span class="text-[15px] font-medium">Ramburs la livrare</span>
+                <span class="block mt-1 text-[13.5px] text-ink-soft">Plătești curierului. Disponibil pentru comenzi sub 3.000 lei.</span>
+              </span>
+            </label>
+
+            <label class="pay-opt flex gap-3.5 border border-line-strong p-4 cursor-pointer hover:border-ink transition-colors" style="border-radius:var(--radius-stone)">
+              <input type="radio" name="pay" value="transfer" class="accent-[var(--color-jade)] mt-1 shrink-0" />
+              <span class="flex-1 min-w-0">
+                <span class="text-[15px] font-medium">Transfer bancar</span>
+                <span class="block mt-1 text-[13.5px] text-ink-soft">Îți trimitem proforma pe e-mail. Piesele la comandă intră în lucru după încasare.</span>
+              </span>
+            </label>
+          </div>
+
+          <div class="flex flex-col gap-3 border-t border-line pt-5">
+            <label class="flex items-start gap-2.5 text-[14px] leading-snug cursor-pointer">
+              <input type="checkbox" id="ck-company" name="company" class="accent-[var(--color-jade)] w-3.5 h-3.5 mt-0.5 shrink-0" />
+              <span>Vreau factură pe firmă</span>
+            </label>
+            <div id="ck-company-fields" hidden class="grid sm:grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label for="ck-cui" class="text-[13px] text-ink-soft">CUI</label>
+                <input id="ck-cui" name="cui" class="ck-in" />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label for="ck-firma" class="text-[13px] text-ink-soft">Denumirea firmei</label>
+                <input id="ck-firma" name="firma" class="ck-in" />
+              </div>
+            </div>
+
+            <label class="flex items-start gap-2.5 text-[13.5px] leading-snug cursor-pointer mt-1">
+              <input type="checkbox" id="ck-terms" name="terms" required class="accent-[var(--color-jade)] w-3.5 h-3.5 mt-0.5 shrink-0" />
+              <span>Am citit și accept <a href={u("/termeni")} class="underline underline-offset-4 hover:text-jade">Termenii</a> și <a href={u("/retur")} class="underline underline-offset-4 hover:text-jade">Politica de retur</a>.</span>
+            </label>
+            <p id="ck-terms-err" class="err text-[12.5px] text-sale" hidden></p>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button type="submit" id="ck-submit" class="u-btn u-btn--solid">Trimite comanda</button>
+            <button type="button" data-back="2" class="u-btn u-btn--ghost">Înapoi</button>
+          </div>
+        </section>
+
+        <!-- confirmare -->
+        <section id="ck-done" hidden class="border border-jade bg-surface p-7 sm:p-9" style="border-radius:var(--radius-stone)">
+          <p class="u-eyebrow text-jade">Comandă înregistrată</p>
+          <h2 class="mt-3 text-[clamp(1.4rem,2.6vw,1.9rem)]">Mulțumim. Comanda <span id="ck-nr" class="tabular-nums"></span> a fost primită.</h2>
+          <p class="mt-4 text-[15.5px] leading-relaxed text-ink-soft max-w-[58ch]">
+            Îți trimitem confirmarea pe e-mail în câteva minute. Pentru piesele lucrate la comandă te sunăm
+            în aceeași zi lucrătoare, ca să stabilim blocul din care le tăiem.
+          </p>
+          <p class="mt-4 text-[13.5px] text-ink-faint">
+            Demo: nu s-a trimis nimic către niciun server și nu s-a încasat nimic.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href={u("/colectie")} class="u-btn u-btn--solid">Înapoi în catalog</a>
+            <a href={u("/cont")} class="u-btn u-btn--ghost">Vezi comanda în cont</a>
+          </div>
+        </section>
+      </form>
+
+      <!-- ===================== sumar ===================== -->
+      <aside class="lg:sticky lg:top-[172px] border border-line bg-surface" style="border-radius:var(--radius-stone)">
+        <div class="px-5 py-4 border-b border-line flex items-center justify-between gap-3">
+          <h2 class="text-[1.05rem] font-[family-name:var(--font-sans)] font-semibold">Comanda ta</h2>
+          <a href={u("/colectie")} class="text-[12.5px] text-jade underline underline-offset-4">Mai adaug ceva</a>
+        </div>
+
+        <ul id="ck-lines" class="px-5 max-h-[320px] overflow-y-auto"></ul>
+
+        <dl class="px-5 py-4 border-t border-line text-[14px] flex flex-col gap-2.5">
+          <div class="flex justify-between gap-3"><dt class="text-ink-soft">Produse</dt><dd id="sum-sub" class="tabular-nums">0,00 Lei</dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-ink-soft">Transport</dt><dd id="sum-ship" class="tabular-nums">35,00 Lei</dd></div>
+          <div id="sum-gift-row" hidden class="flex justify-between gap-3"><dt class="text-ink-soft">Împachetare cadou</dt><dd class="tabular-nums">25,00 Lei</dd></div>
+          <div class="flex justify-between gap-3 pt-2.5 border-t border-line">
+            <dt class="text-[15px] font-medium">Total</dt>
+            <dd id="sum-total" class="u-price text-[19px] tabular-nums">0,00 Lei</dd>
+          </div>
+          <div class="flex justify-between gap-3 -mt-1"><dt class="text-[12.5px] text-ink-faint">din care TVA 19%</dt><dd id="sum-vat" class="text-[12.5px] text-ink-faint tabular-nums">0,00 Lei</dd></div>
+        </dl>
+
+        <ul class="px-5 py-4 border-t border-line flex flex-col gap-2 text-[12.5px] text-ink-soft">
+          <li class="flex gap-2"><span class="text-jade">·</span>Retur în 14 zile, fără explicații</li>
+          <li class="flex gap-2"><span class="text-jade">·</span>Fiecare piesă e fotografiată înainte de expediere</li>
+          <li class="flex gap-2"><span class="text-jade">·</span>Ai întrebări? <a href="tel:+40722319593" class="text-ink hover:text-jade">0722 319 593</a></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .ck-in {
+    background: var(--color-ground);
+    border: 1px solid var(--color-line-strong);
+    padding: 0.7rem 0.85rem;
+    font-size: 15px;
+    border-radius: var(--radius-stone);
+    transition: border-color .18s ease-out;
+    width: 100%;
+  }
+  .ck-in:focus { outline: none; border-color: var(--color-ink); }
+  .ship-opt:has(input:checked), .pay-opt:has(input:checked) {
+    border-color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-ground) 70%, transparent);
+  }
+</style>
+
+<script>
+  const KEY = "ao-cart";
+  const GIFT = 25;
+  const lei = (n: number) => n.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " Lei";
+  type Line = { slug: string; name: string; price: number; image: string; qty: number };
+  const read = (): Line[] => { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } };
+
+  const form = document.getElementById("ck-form") as HTMLFormElement;
+  const body = document.getElementById("ck-body") as HTMLElement;
+  const empty = document.getElementById("ck-empty") as HTMLElement;
+  const linesEl = document.getElementById("ck-lines")!;
+  const steps = Array.from(document.querySelectorAll<HTMLElement>(".step"));
+
+  let lines = read();
+  if (!lines.length) { body.hidden = true; empty.hidden = false; }
+
+  // ---- sumar
+  linesEl.innerHTML = lines.map((l) => `
+    <li class="flex gap-3 py-3.5 border-b border-line last:border-0">
+      <img src="${l.image}" alt="" width="56" height="70" loading="lazy" class="w-14 h-[70px] object-cover bg-surface-2 shrink-0" style="border-radius:var(--radius-stone)">
+      <div class="min-w-0 flex-1">
+        <p class="text-[13px] leading-snug">${l.name}</p>
+        <p class="mt-1 text-[12.5px] text-ink-faint tabular-nums">${l.qty} × ${lei(l.price)}</p>
+      </div>
+      <p class="u-price text-[14px] tabular-nums shrink-0">${lei(l.price * l.qty)}</p>
+    </li>`).join("");
+
+  const sub = lines.reduce((s, l) => s + l.price * l.qty, 0);
+  const subEl = document.getElementById("sum-sub")!;
+  const shipEl = document.getElementById("sum-ship")!;
+  const totalEl = document.getElementById("sum-total")!;
+  const vatEl = document.getElementById("sum-vat")!;
+  const giftRow = document.getElementById("sum-gift-row") as HTMLElement;
+  const giftBox = document.getElementById("ck-gift") as HTMLInputElement | null;
+
+  function shipCost() {
+    const sel = form.querySelector<HTMLInputElement>('input[name="ship"]:checked');
+    const raw = Number(sel?.dataset.cost ?? 35);
+    return sub >= 900 && sel?.value !== "rapid" ? 0 : raw;
+  }
+  function recalc() {
+    const ship = shipCost();
+    const gift = giftBox?.checked ? GIFT : 0;
+    const total = sub + ship + gift;
+    subEl.textContent = lei(sub);
+    shipEl.textContent = ship === 0 ? "Gratuit" : lei(ship);
+    shipEl.classList.toggle("text-jade", ship === 0);
+    giftRow.hidden = gift === 0;
+    totalEl.textContent = lei(total);
+    vatEl.textContent = lei(total - total / 1.19);
+    // prețul afișat pe opțiunea de curier standard, când depășește pragul
+    const std = form.querySelector<HTMLInputElement>('input[name="ship"][value="curier"]');
+    const stdPrice = std?.closest("label")?.querySelector<HTMLElement>(".ship-price");
+    if (stdPrice) {
+      const free = sub >= 900;
+      stdPrice.textContent = free ? "Gratuit" : "35,00 Lei";
+      stdPrice.classList.toggle("text-jade", free);
+    }
+  }
+  recalc();
+
+  form.addEventListener("change", (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.name === "ship" || t.id === "ck-gift") recalc();
+    if (t.id === "ck-gift") (document.getElementById("ck-gift-text") as HTMLElement).hidden = !t.checked;
+    if (t.id === "ck-company") (document.getElementById("ck-company-fields") as HTMLElement).hidden = !t.checked;
+  });
+
+  // ---- pași
+  function paintSteps(n: number) {
+    steps.forEach((s) => {
+      const i = Number(s.dataset.step);
+      const dot = s.querySelector(".dot")!;
+      const lbl = s.querySelector(".lbl")!;
+      const active = i === n, done = i < n;
+      dot.classList.toggle("bg-ink", active);
+      dot.classList.toggle("text-ground", active);
+      dot.classList.toggle("border-ink", active || done);
+      dot.classList.toggle("text-ink-faint", !active && !done);
+      dot.classList.toggle("text-jade", done);
+      dot.textContent = done ? "✓" : String(i);
+      lbl.classList.toggle("text-ink", active || done);
+      lbl.classList.toggle("text-ink-faint", !active && !done);
+    });
+  }
+  function go(n: number) {
+    document.querySelectorAll<HTMLElement>(".ck-panel").forEach((p) => (p.hidden = p.id !== "ck-" + n));
+    paintSteps(n);
+    window.scrollTo({ top: (document.getElementById("ck-form")!.getBoundingClientRect().top + window.scrollY) - 140, behavior: "smooth" });
+  }
+  paintSteps(1);
+
+  // ---- validare
+  function fail(el: HTMLElement, text: string) {
+    const p = el.parentElement?.querySelector<HTMLElement>(".err");
+    if (p) { p.textContent = text; p.hidden = false; }
+    el.classList.add("!border-sale");
+  }
+  function clearErr(scope: HTMLElement) {
+    scope.querySelectorAll<HTMLElement>(".err").forEach((e) => { e.hidden = true; e.textContent = ""; });
+    scope.querySelectorAll<HTMLElement>(".ck-in").forEach((e) => e.classList.remove("!border-sale"));
+  }
+  function validStep1() {
+    const scope = document.getElementById("ck-1")!;
+    clearErr(scope);
+    let ok = true;
+    const req: [string, string, (v: string) => boolean][] = [
+      ["ck-name", "Scrie numele complet.", (v) => v.trim().length >= 3],
+      ["ck-phone", "Scrie un număr de telefon valid.", (v) => v.replace(/\D/g, "").length >= 9],
+      ["ck-email", "Scrie o adresă de e-mail validă.", (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)],
+      ["ck-city", "Scrie localitatea.", (v) => v.trim().length >= 2],
+      ["ck-county", "Alege județul.", (v) => v !== ""],
+      ["ck-addr", "Scrie adresa completă.", (v) => v.trim().length >= 5],
+    ];
+    for (const [id, msg, test] of req) {
+      const el = document.getElementById(id) as HTMLInputElement;
+      if (!test(el.value)) { fail(el, msg); ok = false; }
+    }
+    if (!ok) scope.querySelector<HTMLElement>(".ck-in.\\!border-sale")?.focus();
+    return ok;
+  }
+
+  form.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-next], [data-back]");
+    if (!btn) return;
+    if (btn.dataset.back) return go(Number(btn.dataset.back));
+    const n = Number(btn.dataset.next);
+    if (n === 2 && !validStep1()) return;
+    go(n);
+  });
+
+  // ---- trimitere
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const terms = document.getElementById("ck-terms") as HTMLInputElement;
+    const err = document.getElementById("ck-terms-err") as HTMLElement;
+    if (!terms.checked) { err.textContent = "Bifează că accepți termenii și politica de retur."; err.hidden = false; return; }
+    err.hidden = true;
+
+    const btn = document.getElementById("ck-submit") as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = "Se trimite...";
+
+    // TODO(real): Stripe Checkout / Netopia, apoi confirmare prin Resend
+    window.setTimeout(() => {
+      document.querySelectorAll<HTMLElement>(".ck-panel").forEach((p) => (p.hidden = true));
+      (document.getElementById("ck-done") as HTMLElement).hidden = false;
+      document.getElementById("ck-nr")!.textContent =
+        "AO-" + new Date().getFullYear() + "-" + String(Math.floor(1000 + Math.random() * 9000));
+      paintSteps(4);
+      try { localStorage.removeItem(KEY); } catch {}
+      const badge = document.getElementById("cart-count");
+      if (badge) badge.hidden = true;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 900);
+  });
+</script>

@@ -1,0 +1,16 @@
+# build
+dist/
+.astro/
+
+# dependințe
+node_modules/
+
+# unelte
+.playwright-mcp/
+
+# sistem
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

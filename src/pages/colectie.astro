@@ -1,0 +1,299 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import { PRODUCTS, CATEGORIES, ROOMS, OCCASIONS } from "../data/products";
+
+const maxPrice = Math.ceil(Math.max(...PRODUCTS.map((p) => p.price)) / 100) * 100;
+const minPrice = Math.floor(Math.min(...PRODUCTS.map((p) => p.price)) / 10) * 10;
+
+const countCat = (s: string) => PRODUCTS.filter((p) => p.category === s).length;
+const countRoom = (r: string) => PRODUCTS.filter((p) => p.room.includes(r)).length;
+const countOcc = (o: string) => PRODUCTS.filter((p) => p.occasion.includes(o)).length;
+const countStock = (s: string) => PRODUCTS.filter((p) => p.stock === s).length;
+
+const groups = [
+  { key: "cat",   legend: "Categorie",       open: true,  items: CATEGORIES.map((c) => ({ value: c.slug, label: c.label, n: countCat(c.slug) })) },
+  { key: "room",  legend: "Unde se pune",    open: true,  items: ROOMS.map((r) => ({ value: r, label: r, n: countRoom(r) })) },
+  { key: "occ",   legend: "Pentru ce ocazie", open: false, items: OCCASIONS.map((o) => ({ value: o, label: o, n: countOcc(o) })) },
+  { key: "stock", legend: "Disponibilitate",  open: true,  items: [
+      { value: "stoc", label: "În stoc", n: countStock("stoc") },
+      { value: "comanda", label: "La comandă", n: countStock("comanda") },
+    ] },
+];
+import { u } from "../lib/url";
+---
+<Layout
+  title="Catalog · Obiecte decorative din onix natural | Atelier Onix"
+  description="Tot catalogul Atelier Onix: vaze, sfeșnice, sculpturi, cutii, tăvi, cupe și jocuri din onix verde. Filtrează după cameră, ocazie, preț și disponibilitate.">
+
+  <section class="relative border-b border-line overflow-hidden">
+    <img src={u("/img/textura-onix.png")} alt="" aria-hidden="true" width="1800" height="771"
+      class="absolute inset-0 w-full h-full object-cover opacity-[0.2]" />
+    <div class="relative u-wrap py-10 lg:py-14 text-center">
+      <nav aria-label="Firimituri" class="text-[12.5px] text-ink-soft">
+        <a href={u("/")} class="hover:text-ink transition-colors">Acasă</a>
+        <span class="mx-1.5 text-ink-faint">/</span><span class="text-ink">Catalog</span>
+      </nav>
+      <h1 id="cat-title" class="mt-3 text-[clamp(1.8rem,4.2vw,2.7rem)]">Tot ce iese din atelier</h1>
+      <p id="cat-blurb" class="mt-3 mx-auto max-w-[62ch] text-[15px] leading-relaxed text-ink-soft">
+        Vaze, sfeșnice, sculpturi, cutii și obiecte de masă, toate din onix verde tăiat în blocuri la Otopeni.
+        Piesele marcate „la comandă" se lucrează după ce plasezi comanda, ca să putem alege blocul potrivit.
+      </p>
+    </div>
+  </section>
+
+  <div class="u-wrap mt-6 lg:mt-9 grid lg:grid-cols-[228px_minmax(0,1fr)] gap-x-10 gap-y-5 items-start">
+
+    <!-- ============ FILTRE ============ -->
+    <aside class="lg:sticky lg:top-[172px]">
+      <button type="button" id="filters-toggle" aria-expanded="false" aria-controls="filters"
+        class="lg:hidden u-btn u-btn--ghost w-full justify-between">
+        <span>Filtrează și sortează</span>
+        <span id="filters-badge" class="flex items-center gap-2">
+          <span id="chip-count" hidden class="bg-jade text-white text-[11px] tabular-nums px-1.5 py-0.5 leading-none">0</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 3.5h12M3.5 7h7M5.5 10.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
+        </span>
+      </button>
+
+      <form id="filters" hidden class="mt-4 lg:mt-0 lg:!block">
+        <div class="hidden lg:flex items-baseline justify-between pb-3 border-b border-line">
+          <p class="u-eyebrow">Filtre</p>
+          <button type="reset" id="reset-desktop" class="text-[12.5px] text-ink-faint hover:text-ink underline underline-offset-4">Resetează</button>
+        </div>
+
+        {groups.map((g) => (
+          <details open={g.open} class="group/d border-b border-line">
+            <summary class="flex items-center justify-between gap-3 py-3.5 cursor-pointer list-none select-none">
+              <span class="text-[13.5px] font-medium">{g.legend}</span>
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"
+                class="text-ink-faint transition-transform duration-200 group-open/d:rotate-180 shrink-0">
+                <path d="M1.5 3.5 5.5 7.5 9.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/>
+              </svg>
+            </summary>
+            <div class="pb-4 flex flex-col gap-2.5">
+              {g.items.map((it) => (
+                <label class="flex items-center gap-2.5 text-[14px] cursor-pointer hover:text-jade transition-colors">
+                  <input type="checkbox" name={g.key} value={it.value} class="accent-[var(--color-jade)] w-3.5 h-3.5 shrink-0" />
+                  <span class="flex-1">{it.label}</span>
+                  <span class="text-[12px] text-ink-faint tabular-nums">{it.n}</span>
+                </label>
+              ))}
+            </div>
+          </details>
+        ))}
+
+        <details open class="group/d border-b border-line">
+          <summary class="flex items-center justify-between gap-3 py-3.5 cursor-pointer list-none select-none">
+            <span class="text-[13.5px] font-medium">Preț</span>
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"
+              class="text-ink-faint transition-transform duration-200 group-open/d:rotate-180 shrink-0">
+              <path d="M1.5 3.5 5.5 7.5 9.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/>
+            </svg>
+          </summary>
+          <div class="pb-5">
+            <input type="range" id="price" name="price" min={minPrice} max={maxPrice} step="10" value={maxPrice}
+              class="w-full accent-[var(--color-jade)]" aria-label="Preț maxim" />
+            <p class="mt-1.5 flex justify-between text-[12.5px] text-ink-faint tabular-nums">
+              <span>{minPrice} lei</span>
+              <span class="text-ink">până la <span id="price-out">{maxPrice}</span> lei</span>
+            </p>
+          </div>
+        </details>
+
+        <div class="lg:hidden sticky bottom-3 pt-5 pb-1">
+          <button type="button" id="apply-mobile" class="u-btn u-btn--solid w-full shadow-lg shadow-ink/15">
+            Vezi <span id="apply-count" class="tabular-nums">{PRODUCTS.length}</span> piese
+          </button>
+        </div>
+      </form>
+    </aside>
+
+    <!-- ============ REZULTATE ============ -->
+    <section>
+      <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 pb-3.5 border-b border-line">
+        <p class="text-[14px] text-ink-soft">
+          <span id="count" class="text-ink tabular-nums font-medium">{PRODUCTS.length}</span>
+          <span id="count-word"> piese</span>
+          <span class="text-ink-faint"> din {PRODUCTS.length}</span>
+        </p>
+
+        <div class="flex items-center gap-4">
+          <div class="hidden sm:flex items-center gap-1" role="group" aria-label="Densitate grilă">
+            <button type="button" data-cols="3" aria-pressed="false" class="cols-btn p-1.5 text-ink-faint hover:text-ink transition-colors" title="Trei pe rând">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="0" y="2" width="4" height="12"/><rect x="6" y="2" width="4" height="12"/><rect x="12" y="2" width="4" height="12"/></svg>
+            </button>
+            <button type="button" data-cols="4" aria-pressed="true" class="cols-btn p-1.5 text-ink transition-colors" title="Patru pe rând">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="0" y="3" width="3" height="10"/><rect x="4.3" y="3" width="3" height="10"/><rect x="8.6" y="3" width="3" height="10"/><rect x="12.9" y="3" width="3" height="10"/></svg>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <label for="sort" class="text-[14px] text-ink-soft">Ordonează</label>
+            <select id="sort" class="bg-ground border border-line-strong px-2.5 py-1.5 text-[14px] focus:outline-none focus:border-ink" style="border-radius:var(--radius-stone)">
+              <option value="reco">Recomandate</option>
+              <option value="asc">Preț crescător</option>
+              <option value="desc">Preț descrescător</option>
+              <option value="noi">Noutăți întâi</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- filtre active -->
+      <ul id="chips" hidden class="flex flex-wrap gap-2 pt-3.5" aria-label="Filtre active"></ul>
+
+      <ul id="grid" class="mt-6 grid gap-x-5 gap-y-9 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {PRODUCTS.map((p, i) => (
+          <li data-cat={p.category} data-room={p.room.join("|")} data-occ={p.occasion.join("|")}
+              data-price={p.price} data-stock={p.stock} data-order={i} data-new={p.new ? "1" : "0"}>
+            <ProductCard p={p} eager={i < 4} />
+          </li>
+        ))}
+      </ul>
+
+      <p id="empty" hidden class="mt-14 mb-10 text-center text-[15px] text-ink-soft">
+        Nicio piesă nu corespunde filtrelor alese.
+        <button type="button" id="clear" class="text-jade underline underline-offset-4 ml-1">Șterge filtrele</button>
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById("filters") as HTMLFormElement | null;
+  const grid = document.getElementById("grid") as HTMLElement | null;
+  if (!form || !grid) throw new Error("filters not mounted");
+
+  const countEl = document.getElementById("count");
+  const wordEl = document.getElementById("count-word");
+  const emptyEl = document.getElementById("empty") as HTMLElement | null;
+  const sortEl = document.getElementById("sort") as HTMLSelectElement | null;
+  const priceEl = form.querySelector("#price") as HTMLInputElement;
+  const priceOut = document.getElementById("price-out");
+  const chipsEl = document.getElementById("chips") as HTMLElement | null;
+  const chipCount = document.getElementById("chip-count") as HTMLElement | null;
+  const applyCount = document.getElementById("apply-count");
+  const maxPrice = Number(priceEl.max);
+
+  const items = Array.from(grid.children) as HTMLElement[];
+  const labelOf = (name: string, value: string) =>
+    form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${CSS.escape(value)}"]`)
+      ?.parentElement?.querySelector("span")?.textContent?.trim() ?? value;
+  const picked = (name: string) =>
+    Array.from(form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]:checked`)).map((i) => i.value);
+
+  function renderChips() {
+    if (!chipsEl) return;
+    const active: { name: string; value: string; label: string }[] = [];
+    for (const name of ["cat", "room", "occ", "stock"]) {
+      for (const v of picked(name)) active.push({ name, value: v, label: labelOf(name, v) });
+    }
+    const p = Number(priceEl.value);
+    if (p < maxPrice) active.push({ name: "price", value: "", label: `sub ${p} lei` });
+
+    chipsEl.hidden = active.length === 0;
+    if (chipCount) { chipCount.hidden = active.length === 0; chipCount.textContent = String(active.length); }
+
+    chipsEl.innerHTML = active.map((a) => `
+      <li><button type="button" data-chip-name="${a.name}" data-chip-value="${a.value}"
+        class="flex items-center gap-1.5 border border-line-strong bg-surface pl-2.5 pr-2 py-1 text-[12.5px] hover:border-ink transition-colors"
+        style="border-radius:var(--radius-stone)">
+        ${a.label}
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true"><path d="M1 1l7 7M8 1L1 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
+        <span class="sr-only">Scoate filtrul</span>
+      </button></li>`).join("") + `
+      <li><button type="button" id="chip-clear" class="px-2 py-1 text-[12.5px] text-ink-faint hover:text-ink underline underline-offset-4">Șterge tot</button></li>`;
+  }
+
+  function apply() {
+    const cats = picked("cat"), rooms = picked("room"), occs = picked("occ"), stocks = picked("stock");
+    const maxP = Number(priceEl.value);
+    if (priceOut) priceOut.textContent = String(maxP);
+
+    let shown = 0;
+    for (const li of items) {
+      const ok =
+        (!cats.length || cats.includes(li.dataset.cat!)) &&
+        (!rooms.length || rooms.some((r) => li.dataset.room!.split("|").includes(r))) &&
+        (!occs.length || occs.some((o) => li.dataset.occ!.split("|").includes(o))) &&
+        (!stocks.length || stocks.includes(li.dataset.stock!)) &&
+        Number(li.dataset.price) <= maxP;
+      li.hidden = !ok;
+      if (ok) shown++;
+    }
+    if (countEl) countEl.textContent = String(shown);
+    if (wordEl) wordEl.textContent = shown === 1 ? " piesă" : " piese";
+    if (applyCount) applyCount.textContent = String(shown);
+    if (emptyEl) emptyEl.hidden = shown > 0;
+    renderChips();
+  }
+
+  function sort() {
+    const mode = sortEl?.value ?? "reco";
+    [...items].sort((a, b) => {
+      if (mode === "asc") return Number(a.dataset.price) - Number(b.dataset.price);
+      if (mode === "desc") return Number(b.dataset.price) - Number(a.dataset.price);
+      if (mode === "noi") return Number(b.dataset.new) - Number(a.dataset.new) || Number(a.dataset.order) - Number(b.dataset.order);
+      return Number(a.dataset.order) - Number(b.dataset.order);
+    }).forEach((li) => grid!.appendChild(li));
+  }
+
+  form.addEventListener("change", apply);
+  form.addEventListener("input", apply);
+  form.addEventListener("reset", () => setTimeout(() => { priceEl.value = String(maxPrice); apply(); }, 0));
+  form.addEventListener("submit", (e) => e.preventDefault());
+  sortEl?.addEventListener("change", sort);
+
+  chipsEl?.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-chip-name], #chip-clear");
+    if (!btn) return;
+    if (btn.id === "chip-clear") { form.reset(); priceEl.value = String(maxPrice); apply(); return; }
+    if (btn.dataset.chipName === "price") { priceEl.value = String(maxPrice); apply(); return; }
+    const box = form.querySelector<HTMLInputElement>(
+      `input[name="${btn.dataset.chipName}"][value="${CSS.escape(btn.dataset.chipValue!)}"]`);
+    if (box) { box.checked = false; apply(); }
+  });
+
+  document.getElementById("clear")?.addEventListener("click", () => { form.reset(); priceEl.value = String(maxPrice); apply(); });
+
+  // densitatea grilei
+  const colsBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".cols-btn"));
+  colsBtns.forEach((b) => b.addEventListener("click", () => {
+    const n = b.dataset.cols!;
+    grid.classList.toggle("xl:grid-cols-4", n === "4");
+    grid.classList.toggle("xl:grid-cols-3", n === "3");
+    colsBtns.forEach((o) => {
+      const on = o === b;
+      o.setAttribute("aria-pressed", String(on));
+      o.classList.toggle("text-ink", on);
+      o.classList.toggle("text-ink-faint", !on);
+    });
+  }));
+
+  // preselecție din ?cat=, cu titlu potrivit categoriei
+  const wanted = new URLSearchParams(location.search).get("cat");
+  if (wanted) {
+    const box = form.querySelector<HTMLInputElement>(`input[name="cat"][value="${CSS.escape(wanted)}"]`);
+    if (box) {
+      box.checked = true;
+      const title = document.getElementById("cat-title");
+      if (title) title.textContent = labelOf("cat", wanted);
+    }
+  }
+  apply();
+
+  // drawer de filtre pe mobil
+  const ft = document.getElementById("filters-toggle");
+  const openMobile = () => { ft!.setAttribute("aria-expanded", "true"); form!.hidden = false; };
+  const closeMobile = () => { ft!.setAttribute("aria-expanded", "false"); form!.hidden = true; };
+  ft?.addEventListener("click", () => (ft.getAttribute("aria-expanded") === "true" ? closeMobile() : openMobile()));
+  document.getElementById("apply-mobile")?.addEventListener("click", () => {
+    closeMobile();
+    document.getElementById("grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  const mq = window.matchMedia("(min-width: 1024px)");
+  const syncLayout = () => { if (mq.matches) form!.hidden = false; else if (ft?.getAttribute("aria-expanded") !== "true") form!.hidden = true; };
+  mq.addEventListener("change", syncLayout);
+  syncLayout();
+</script>

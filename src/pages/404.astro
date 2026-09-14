@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { u } from "../lib/url";
+---
+<Layout title="Pagina nu există | Atelier Onix" description="Pagina căutată nu există.">
+  <section class="u-wrap py-20 lg:py-28 text-center">
+    <p class="u-eyebrow">Eroare 404</p>
+    <h1 class="mt-4 text-[clamp(1.8rem,4vw,2.6rem)]">Pagina asta nu există</h1>
+    <p class="mt-4 mx-auto max-w-[46ch] text-[16px] leading-relaxed text-ink-soft">
+      Poate a fost mutată, poate linkul e vechi. Catalogul e în continuare la locul lui.
+    </p>
+    <div class="mt-7 flex flex-wrap gap-3 justify-center">
+      <a href={u("/colectie")} class="u-btn u-btn--solid">Vezi catalogul</a>
+      <a href={u("/")} class="u-btn u-btn--ghost">Înapoi acasă</a>
+    </div>
+  </section>
+</Layout>

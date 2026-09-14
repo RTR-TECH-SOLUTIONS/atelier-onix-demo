@@ -1,0 +1,254 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import { CATEGORIES, PRODUCTS, featured, fresh, lei } from "../data/products";
+
+const bestsellers = featured();
+const noutati = fresh();
+const inStoc = PRODUCTS.filter((p) => p.stock === "stoc").length;
+const laComanda = PRODUCTS.filter((p) => p.stock === "comanda").length;
+const minPret = Math.min(...PRODUCTS.map((p) => p.price));
+const countByCat: Record<string, number> = Object.fromEntries(
+  CATEGORIES.map((c) => [c.slug, PRODUCTS.filter((p) => p.category === c.slug).length]),
+);
+const piesaLunii = PRODUCTS.find((p) => p.slug === "lampa-masa-onix")!;
+const catImages: Record<string, string> = {
+  decor: "/img/produse/vaza-onix.jpg",
+  sculpturi: "/img/produse/elefant-onix.jpg",
+  birou: "/img/produse/suport-pixuri.jpg",
+  iluminat: "/img/produse/sfesnice-pereche.jpg",
+  servire: "/img/produse/cupe-onix.jpg",
+  jocuri: "/img/produse/set-sah-onix.jpg",
+  mobilier: "/img/produse/masuta-onix-alama.jpg",
+};
+import { u } from "../lib/url";
+---
+<Layout
+  title="Atelier Onix · Obiecte decorative din onix natural"
+  description="Vaze, sfeșnice, sculpturi, cutii și obiecte de masă din onix verde, tăiate și lustruite în atelierul nostru. Livrare în toată România, retur în 14 zile.">
+
+  <!-- HERO: split, ca la referință — text stânga, fotografie dreapta -->
+  <section class="u-wrap pt-10 lg:pt-16">
+    <div class="grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-14 items-center">
+      <div class="max-w-[46ch]">
+        <p class="u-eyebrow">Colecția de toamnă</p>
+        <h1 class="mt-4 text-[clamp(2.1rem,5.4vw,3.55rem)] leading-[1.07]">
+          Piatră care lasă<br class="hidden sm:block" /> lumina să treacă
+        </h1>
+        <p class="mt-5 text-[17px] leading-relaxed text-ink-soft">
+          Vaze, sfeșnice, sculpturi și obiecte de masă din onix verde, tăiate și lustruite bucată cu bucată
+          în atelierul din Otopeni. Fiecare piesă are alt desen, pentru că vine din alt bloc.
+        </p>
+        <div class="mt-7 flex flex-col sm:flex-row gap-3">
+          <a href={u("/colectie")} class="u-btn u-btn--solid">Vezi catalogul</a>
+          <a href={u("/piatra")} class="u-btn u-btn--ghost">Cum lucrăm piatra</a>
+        </div>
+        <p class="mt-6 text-[13.5px] text-ink-faint">
+          Peste 1.400 de piese livrate din 2008 · Showroom în Otopeni
+        </p>
+      </div>
+
+      <figure class="relative">
+        <img src={u("/img/hero-living.png")} alt="Măsuță rotundă cu blat din onix verde translucid și bază tripod din alamă, într-un living luminat natural"
+          width="1344" height="756" fetchpriority="high" decoding="async"
+          class="w-full aspect-[4/3] lg:aspect-[16/11] object-cover" style="border-radius:var(--radius-stone)" />
+        <figcaption class="absolute bottom-0 left-0 bg-ground/94 backdrop-blur-[2px] px-4 py-3 max-w-[64%]">
+          <p class="text-[12.5px] leading-snug">Măsuță rotundă din onix verde, bază tripod din alamă</p>
+          <p class="u-price text-[15px] mt-0.5 tabular-nums">2.850,00 Lei</p>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- BANDĂ DE ÎNCREDERE: trei dovezi, ca la referință -->
+  <section aria-label="De ce noi" class="mt-14 lg:mt-20 border-y border-line bg-surface">
+    <ul class="u-wrap grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-line">
+      <li class="py-6 sm:py-7 sm:px-8 sm:first:pl-0 flex gap-4">
+        <span class="font-[family-name:var(--font-display)] text-[26px] text-jade leading-none tabular-nums shrink-0">17</span>
+        <div><p class="text-[14.5px] font-medium">ani de prelucrat piatră</p>
+        <p class="text-[13px] text-ink-soft mt-0.5">Atelier propriu, nu revânzare din container.</p></div>
+      </li>
+      <li class="py-6 sm:py-7 sm:px-8 flex gap-4">
+        <span class="font-[family-name:var(--font-display)] text-[26px] text-jade leading-none shrink-0">01</span>
+        <div><p class="text-[14.5px] font-medium">bucată, un singur bloc</p>
+        <p class="text-[13px] text-ink-soft mt-0.5">Nu asamblăm din felii lipite. Se vede la muchie.</p></div>
+      </li>
+      <li class="py-6 sm:py-7 sm:px-8 sm:last:pr-0 flex gap-4">
+        <span class="font-[family-name:var(--font-display)] text-[26px] text-jade leading-none shrink-0">14</span>
+        <div><p class="text-[14.5px] font-medium">zile pentru retur</p>
+        <p class="text-[13px] text-ink-soft mt-0.5">Transport gratuit peste 900 lei, cu asigurare.</p></div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- CATEGORII -->
+  <section class="u-wrap mt-16 lg:mt-24">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 class="text-[clamp(1.5rem,3vw,2.1rem)]">Ce lucrăm</h2>
+      <a href={u("/colectie")} class="u-nav-link text-jade hover:text-jade-deep transition-colors border-b border-jade/40 pb-0.5">Tot catalogul</a>
+    </div>
+
+    <ul class="mt-7 grid gap-3 grid-cols-2 lg:grid-cols-4 [grid-auto-rows:168px] sm:[grid-auto-rows:186px] lg:[grid-auto-rows:212px]">
+      {CATEGORIES.map((c, i) => (
+        <li class:list={[i === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"]}>
+          <a href={u(`/colectie?cat=${c.slug}`)}
+            class="group relative block w-full h-full overflow-hidden bg-surface-2" style="border-radius:var(--radius-stone)">
+            <img src={u(catImages[c.slug])} alt="" width="800" height="800" loading="lazy" decoding="async"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.05]" />
+            <span class="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-ink/90 via-ink/50 to-transparent"></span>
+            <span class="absolute inset-x-0 bottom-0 p-4 lg:p-5 flex flex-col gap-1">
+              <span class:list={["font-[family-name:var(--font-display)] text-white leading-tight",
+                i === 0 ? "text-[clamp(1.35rem,2.6vw,1.95rem)]" : "text-[clamp(1rem,1.5vw,1.2rem)]"]}>{c.label}</span>
+              {i === 0 && <span class="text-[13.5px] leading-snug text-white/80 max-w-[38ch]">{c.blurb}</span>}
+              <span class="mt-1 u-nav-link text-white/75 group-hover:text-white transition-colors">
+                {countByCat[c.slug]} {countByCat[c.slug] === 1 ? "piesă" : "piese"}
+              </span>
+            </span>
+          </a>
+        </li>
+      ))}
+
+      <li class="col-span-2 row-span-1">
+        <a href={u("/colectie")} class="group flex h-full items-center gap-5 border border-line bg-surface px-5 hover:border-ink transition-colors" style="border-radius:var(--radius-stone)">
+          <div class="min-w-0">
+            <p class="font-[family-name:var(--font-display)] text-[clamp(1.15rem,2vw,1.55rem)] leading-tight">Toate cele {PRODUCTS.length} de piese</p>
+            <p class="mt-1.5 text-[13px] leading-snug text-ink-soft">De la un suport de lumânare de {minPret} lei până la o masă lucrată șase săptămâni. {inStoc} pleacă azi din stoc.</p>
+          </div>
+          <span class="ml-auto shrink-0 grid place-items-center w-9 h-9 border border-line-strong text-ink-soft group-hover:border-ink group-hover:text-ink transition-colors" style="border-radius:var(--radius-stone)" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h11M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
+          </span>
+          <span class="sr-only">Vezi tot catalogul</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- BESTSELLERS -->
+  <section class="u-wrap mt-16 lg:mt-24">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="text-[clamp(1.5rem,3vw,2.1rem)]">Cele mai cerute</h2>
+        <p class="mt-1.5 text-[14.5px] text-ink-soft">Piesele pe care le refacem cel mai des în atelier.</p>
+      </div>
+    </div>
+    <ul class="mt-7 grid gap-x-5 gap-y-10 grid-cols-2 lg:grid-cols-4">
+      {bestsellers.slice(0, 8).map((p) => <li><ProductCard p={p} /></li>)}
+    </ul>
+  </section>
+
+  <!-- NOUTĂȚI -->
+  <section class="u-wrap mt-16 lg:mt-24">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="text-[clamp(1.5rem,3vw,2.1rem)]">Ieșite din atelier luna asta</h2>
+        <p class="mt-1.5 text-[14.5px] text-ink-soft">Trei piese noi, tăiate din blocul adus în august.</p>
+      </div>
+      <a href={u("/colectie")} class="u-nav-link text-jade hover:text-jade-deep transition-colors border-b border-jade/40 pb-0.5">Tot catalogul</a>
+    </div>
+    <ul class="mt-7 grid gap-x-5 gap-y-10 grid-cols-2 lg:grid-cols-4">
+      {noutati.map((p) => <li><ProductCard p={p} /></li>)}
+    </ul>
+  </section>
+
+  <!-- DESPRE PIATRĂ: povestea materialului, cu fotografie din atelier -->
+  <section class="mt-16 lg:mt-24 bg-surface border-y border-line">
+    <div class="u-wrap py-14 lg:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <figure class="order-2 lg:order-1">
+        <img src={u("/img/atelier.png")} alt="Mâini de meșter lustruind cu apă un bloc brut de onix verde pe bancul de lucru"
+          width="1152" height="864" loading="lazy" decoding="async"
+          class="w-full aspect-[4/3] object-cover" style="border-radius:var(--radius-stone)" />
+      </figure>
+      <div class="order-1 lg:order-2 max-w-[52ch]">
+        <p class="u-eyebrow">Materialul</p>
+        <h2 class="mt-4 text-[clamp(1.5rem,3vw,2.2rem)]">De ce nu arată două piese la fel</h2>
+        <div class="mt-5 flex flex-col gap-4 text-[15.5px] leading-relaxed text-ink-soft">
+          <p>
+            Onixul se formează în straturi, an după an, ca inelele unui copac. Când tăiem blocul, tăiem prin acele
+            straturi, iar unghiul tăieturii decide desenul. Cu doi centimetri mai la stânga, ies alte vinișoare.
+          </p>
+          <p>
+            De asta nu putem promite un exemplar identic cu fotografia. Putem promite grosimea, dimensiunea, finisajul
+            și faptul că piesa e tăiată dintr-un singur bloc, nu lipită din felii.
+          </p>
+          <p>
+            Șlefuirea trece prin șapte granulații, de la 60 la 3000. Ultimele două se fac cu apă, manual, pentru
+            că mașina mătuiește marginile.
+          </p>
+        </div>
+        <a href={u("/piatra")} class="u-btn u-btn--ghost mt-7">Cum alegem un bloc</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIESA LUNII -->
+  <section class="u-wrap mt-16 lg:mt-24">
+    <div class="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-8 lg:gap-14 items-center">
+      <a href={u(`/produs/${piesaLunii.slug}`)} class="block overflow-hidden bg-surface group" style="border-radius:var(--radius-stone)">
+        <img src={u(piesaLunii.image)} alt={piesaLunii.name} width="900" height="675" loading="lazy" decoding="async"
+          class="w-full aspect-[4/3] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" />
+      </a>
+      <div class="max-w-[46ch]">
+        <p class="u-eyebrow">Piesa lunii septembrie</p>
+        <h2 class="mt-4 text-[clamp(1.4rem,2.8vw,2rem)]">Lampa cu abajur de 6 milimetri</h2>
+        <p class="mt-4 text-[15.5px] leading-relaxed text-ink-soft">
+          Abajurul se carotează dintr-un bloc și se subțiază la 6 mm de jur împrejur, măsurat cu ceasul
+          comparator. Sub 5 mm piatra crapă la căldură, peste 8 mm nu mai trece destulă lumină.
+          E piesa cea mai grea de făcut din tot catalogul.
+        </p>
+        <p class="mt-5 tabular-nums"><span class="u-price text-[22px]">{lei(piesaLunii.price)}</span></p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href={u(`/produs/${piesaLunii.slug}`)} class="u-btn u-btn--solid">Vezi piesa</a>
+          <a href="https://wa.me/40722319593" class="u-btn u-btn--ghost">Întreabă pe WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CADOURI CORPORATE -->
+  <section class="u-wrap mt-16 lg:mt-24">
+    <div class="border border-line bg-surface px-6 sm:px-10 py-10 lg:py-14 grid lg:grid-cols-[minmax(0,1fr)_auto] gap-8 items-center" style="border-radius:var(--radius-stone)">
+      <div class="max-w-[58ch]">
+        <p class="u-eyebrow">Pentru firme</p>
+        <h2 class="mt-3 text-[clamp(1.35rem,2.6vw,1.9rem)]">Cadouri de protocol, gravate cu numele companiei</h2>
+        <p class="mt-4 text-[15.5px] leading-relaxed text-ink-soft">
+          Piramide, mere și suporturi de birou, gravate pe bază cu logo sau nume. Comandă minimă 10 bucăți,
+          termen 3 săptămâni. Trimitem un exemplar de probă înainte de a executa seria.
+        </p>
+      </div>
+      <a href={u("/cadouri-corporate")} class="u-btn u-btn--solid lg:justify-self-end">Cere ofertă</a>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="u-wrap mt-16 lg:mt-24">
+    <div class="u-vein"></div>
+    <div class="pt-10 grid md:grid-cols-[minmax(0,1fr)_minmax(0,420px)] gap-6 md:gap-12 items-center">
+      <div>
+        <h2 class="text-[clamp(1.25rem,2.3vw,1.6rem)]">Când tăiem un bloc nou, anunțăm întâi aici</h2>
+        <p class="mt-2 text-[14.5px] text-ink-soft max-w-[52ch]">
+          Un e-mail la câteva săptămâni, cu piesele proaspăt ieșite din atelier. Fără promoții inventate.
+        </p>
+      </div>
+      <form id="nl" class="flex flex-col sm:flex-row gap-2.5">
+        <label for="nl-email" class="sr-only">Adresa ta de e-mail</label>
+        <input id="nl-email" name="email" type="email" required placeholder="adresa@exemplu.ro"
+          class="flex-1 bg-ground border border-line-strong px-3.5 py-3 text-[15px] placeholder:text-ink-faint focus:outline-none focus:border-ink"
+          style="border-radius:var(--radius-stone)" />
+        <button type="submit" class="u-btn u-btn--solid shrink-0">Abonează-mă</button>
+      </form>
+    </div>
+    <p id="nl-msg" hidden class="mt-3 text-[14px] text-jade">Gata. Îți scriem când iese ceva nou din atelier.</p>
+  </section>
+
+</Layout>
+
+<script>
+  // TODO(real): conectare la Resend
+  const form = document.getElementById("nl") as HTMLFormElement | null;
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const msg = document.getElementById("nl-msg");
+    if (msg) msg.hidden = false;
+    form.reset();
+  });
+</script>

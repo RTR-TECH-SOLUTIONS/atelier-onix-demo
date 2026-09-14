@@ -1,0 +1,290 @@
+---
+import Layout from "../layouts/Layout.astro";
+// Demo: autentificarea nu lovește niciun server.
+// TODO(real): Medusa customer API sau Supabase Auth (magic link + parolă).
+import { u } from "../lib/url";
+---
+<Layout
+  title="Contul meu | Atelier Onix"
+  description="Intră în contul Atelier Onix ca să vezi comenzile, piesele salvate și stadiul pieselor lucrate la comandă.">
+
+  <div class="lg:min-h-[calc(100dvh-var(--header-h))] grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.02fr)]">
+
+    <!-- ============== formular ============== -->
+    <section class="flex items-center justify-center px-5 sm:px-8 py-12 lg:py-16">
+      <div class="w-full max-w-[420px]">
+
+        <p class="u-eyebrow">Contul tău</p>
+        <h1 id="acc-title" class="mt-3 text-[clamp(1.75rem,3.4vw,2.35rem)] leading-[1.12]">Bine ai revenit</h1>
+        <p id="acc-lede" class="mt-3 text-[15px] leading-relaxed text-ink-soft">
+          Intră în cont ca să vezi comenzile și stadiul pieselor aflate în lucru.
+        </p>
+
+        <!-- comutator -->
+        <div class="mt-8 grid grid-cols-2 border border-line-strong p-1 gap-1" style="border-radius:var(--radius-stone)" role="tablist" aria-label="Autentificare sau cont nou">
+          <button role="tab" id="tab-login" aria-controls="panel-login" aria-selected="true"
+            class="acc-tab u-nav-link py-2.5 bg-ink text-ground transition-colors" style="border-radius:var(--radius-stone)">Am cont</button>
+          <button role="tab" id="tab-signup" aria-controls="panel-signup" aria-selected="false"
+            class="acc-tab u-nav-link py-2.5 text-ink-soft hover:text-ink transition-colors" style="border-radius:var(--radius-stone)">Cont nou</button>
+        </div>
+
+        <!-- intrare în cont -->
+        <form id="panel-login" role="tabpanel" aria-labelledby="tab-login" class="acc-panel mt-7 flex flex-col gap-4" novalidate>
+          <div class="flex flex-col gap-1.5">
+            <label for="li-email" class="text-[13px] text-ink-soft">Adresa de e-mail</label>
+            <input id="li-email" name="email" type="email" required autocomplete="email" placeholder="adresa@exemplu.ro"
+              class="acc-input bg-ground border border-line-strong px-3.5 py-3 text-[15px] placeholder:text-ink-faint focus:outline-none focus:border-ink transition-colors"
+              style="border-radius:var(--radius-stone)" />
+            <p class="err text-[12.5px] text-sale" hidden></p>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-baseline justify-between gap-3">
+              <label for="li-pass" class="text-[13px] text-ink-soft">Parola</label>
+              <button type="button" id="forgot" class="text-[12.5px] text-jade hover:text-jade-deep underline underline-offset-4">Am uitat parola</button>
+            </div>
+            <div class="relative">
+              <input id="li-pass" name="password" type="password" required autocomplete="current-password" minlength="6"
+                class="acc-input w-full bg-ground border border-line-strong pl-3.5 pr-12 py-3 text-[15px] focus:outline-none focus:border-ink transition-colors"
+                style="border-radius:var(--radius-stone)" />
+              <button type="button" data-toggle-pass="li-pass" aria-label="Arată parola"
+                class="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 text-ink-faint hover:text-ink transition-colors">
+                <svg width="17" height="17" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M1 9s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z" stroke="currentColor" stroke-width="1.3"/>
+                  <circle cx="9" cy="9" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                </svg>
+              </button>
+            </div>
+            <p class="err text-[12.5px] text-sale" hidden></p>
+          </div>
+
+          <label class="flex items-center gap-2.5 text-[14px] cursor-pointer">
+            <input type="checkbox" name="remember" class="accent-[var(--color-jade)] w-3.5 h-3.5" checked />
+            Ține-mă minte pe acest dispozitiv
+          </label>
+
+          <button type="submit" class="u-btn u-btn--solid w-full mt-1">Intră în cont</button>
+          <p class="msg text-[14px] text-jade" hidden></p>
+        </form>
+
+        <!-- cont nou -->
+        <form id="panel-signup" role="tabpanel" aria-labelledby="tab-signup" hidden class="acc-panel mt-7 flex flex-col gap-4" novalidate>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label for="su-name" class="text-[13px] text-ink-soft">Nume</label>
+              <input id="su-name" name="name" required autocomplete="given-name"
+                class="acc-input bg-ground border border-line-strong px-3.5 py-3 text-[15px] focus:outline-none focus:border-ink transition-colors" style="border-radius:var(--radius-stone)" />
+              <p class="err text-[12.5px] text-sale" hidden></p>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="su-phone" class="text-[13px] text-ink-soft">Telefon</label>
+              <input id="su-phone" name="phone" type="tel" required autocomplete="tel" placeholder="07xx xxx xxx"
+                class="acc-input bg-ground border border-line-strong px-3.5 py-3 text-[15px] placeholder:text-ink-faint focus:outline-none focus:border-ink transition-colors" style="border-radius:var(--radius-stone)" />
+              <p class="err text-[12.5px] text-sale" hidden></p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="su-email" class="text-[13px] text-ink-soft">Adresa de e-mail</label>
+            <input id="su-email" name="email" type="email" required autocomplete="email" placeholder="adresa@exemplu.ro"
+              class="acc-input bg-ground border border-line-strong px-3.5 py-3 text-[15px] placeholder:text-ink-faint focus:outline-none focus:border-ink transition-colors" style="border-radius:var(--radius-stone)" />
+            <p class="err text-[12.5px] text-sale" hidden></p>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="su-pass" class="text-[13px] text-ink-soft">Parolă</label>
+            <div class="relative">
+              <input id="su-pass" name="password" type="password" required autocomplete="new-password" minlength="8"
+                class="acc-input w-full bg-ground border border-line-strong pl-3.5 pr-12 py-3 text-[15px] focus:outline-none focus:border-ink transition-colors" style="border-radius:var(--radius-stone)" />
+              <button type="button" data-toggle-pass="su-pass" aria-label="Arată parola"
+                class="absolute right-1 top-1/2 -translate-y-1/2 p-2.5 text-ink-faint hover:text-ink transition-colors">
+                <svg width="17" height="17" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M1 9s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z" stroke="currentColor" stroke-width="1.3"/>
+                  <circle cx="9" cy="9" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+                </svg>
+              </button>
+            </div>
+            <div class="mt-1 flex items-center gap-2">
+              <span class="flex-1 h-[3px] bg-surface-2 overflow-hidden" style="border-radius:var(--radius-stone)">
+                <span id="pw-bar" class="block h-full w-0 bg-line-strong transition-[width,background-color] duration-300"></span>
+              </span>
+              <span id="pw-word" class="text-[12px] text-ink-faint w-[72px] text-right">minimum 8</span>
+            </div>
+            <p class="err text-[12.5px] text-sale" hidden></p>
+          </div>
+
+          <label class="flex items-start gap-2.5 text-[13.5px] leading-snug cursor-pointer">
+            <input type="checkbox" name="terms" required class="accent-[var(--color-jade)] w-3.5 h-3.5 mt-0.5 shrink-0" />
+            <span>Am citit <a href={u("/termeni")} class="underline underline-offset-4 hover:text-jade">Termenii</a> și <a href={u("/confidentialitate")} class="underline underline-offset-4 hover:text-jade">Politica de confidențialitate</a>.</span>
+          </label>
+          <p class="err text-[12.5px] text-sale -mt-2" hidden></p>
+
+          <button type="submit" class="u-btn u-btn--solid w-full mt-1">Creează contul</button>
+          <p class="msg text-[14px] text-jade" hidden></p>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-line">
+          <p class="text-[13px] text-ink-soft">
+            Nu vrei cont? Poți comanda și fără, ca invitat.{" "}
+            <a href={u("/checkout")} class="text-jade underline underline-offset-4 hover:text-jade-deep">Mergi la finalizare</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== panou vizual ============== -->
+    <aside class="relative hidden lg:block overflow-hidden bg-jade-deep">
+      <img src={u("/img/textura-onix.png")} alt="" aria-hidden="true" width="1800" height="771"
+        class="absolute inset-0 w-full h-full object-cover opacity-70" />
+      <span class="absolute inset-0 bg-gradient-to-tr from-jade-deep/92 via-jade-deep/55 to-jade-deep/25"></span>
+
+      <div class="relative h-full flex flex-col justify-end p-10 xl:p-14">
+        <blockquote class="max-w-[34ch]">
+          <p class="font-[family-name:var(--font-display)] text-white text-[clamp(1.5rem,2.4vw,2.1rem)] leading-[1.22]">
+            Nu ținem stoc la piesele mari. Le tăiem după ce le comandați, din blocul potrivit.
+          </p>
+          <footer class="mt-4 text-[13.5px] text-surface-2/75">Din contul tău vezi în ce etapă e piesa.</footer>
+        </blockquote>
+
+        <ul class="mt-10 grid gap-px bg-white/15 border border-white/15" style="border-radius:var(--radius-stone)">
+          <li class="bg-jade-deep/85 backdrop-blur-[2px] px-5 py-4 flex gap-4 items-start">
+            <span class="font-[family-name:var(--font-display)] text-[15px] text-white/50 tabular-nums pt-0.5">01</span>
+            <div><p class="text-[14.5px] text-white">Comenzile și facturile</p>
+            <p class="text-[13px] text-surface-2/70 mt-0.5">Le descarci oricând, nu le mai cauți prin e-mail.</p></div>
+          </li>
+          <li class="bg-jade-deep/85 backdrop-blur-[2px] px-5 py-4 flex gap-4 items-start">
+            <span class="font-[family-name:var(--font-display)] text-[15px] text-white/50 tabular-nums pt-0.5">02</span>
+            <div><p class="text-[14.5px] text-white">Stadiul pieselor la comandă</p>
+            <p class="text-[13px] text-surface-2/70 mt-0.5">Bloc ales, tăiat, șlefuit, lustruit, ambalat.</p></div>
+          </li>
+          <li class="bg-jade-deep/85 backdrop-blur-[2px] px-5 py-4 flex gap-4 items-start">
+            <span class="font-[family-name:var(--font-display)] text-[15px] text-white/50 tabular-nums pt-0.5">03</span>
+            <div><p class="text-[14.5px] text-white">Piesele salvate</p>
+            <p class="text-[13px] text-surface-2/70 mt-0.5">Te anunțăm când reintră în stoc una pe care ai pus ochii.</p></div>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</Layout>
+
+<script>
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>(".acc-tab"));
+  const title = document.getElementById("acc-title");
+  const lede = document.getElementById("acc-lede");
+  const COPY: Record<string, [string, string]> = {
+    "tab-login": ["Bine ai revenit", "Intră în cont ca să vezi comenzile și stadiul pieselor aflate în lucru."],
+    "tab-signup": ["Îți facem cont", "Durează un minut. După aceea urmărești fiecare piesă din atelier până la ușă."],
+  };
+
+  tabs.forEach((t) => t.addEventListener("click", () => {
+    tabs.forEach((o) => {
+      const on = o === t;
+      o.setAttribute("aria-selected", String(on));
+      o.classList.toggle("bg-ink", on);
+      o.classList.toggle("text-ground", on);
+      o.classList.toggle("text-ink-soft", !on);
+      const panel = document.getElementById(o.getAttribute("aria-controls")!);
+      if (panel) panel.hidden = !on;
+    });
+    const [h, l] = COPY[t.id];
+    if (title) title.textContent = h;
+    if (lede) lede.textContent = l;
+  }));
+
+  // arată / ascunde parola
+  document.querySelectorAll<HTMLButtonElement>("[data-toggle-pass]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.togglePass!) as HTMLInputElement;
+      const showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      btn.setAttribute("aria-label", showing ? "Arată parola" : "Ascunde parola");
+      btn.classList.toggle("text-jade", !showing);
+      btn.classList.toggle("text-ink-faint", showing);
+    });
+  });
+
+  // putere parolă
+  const pass = document.getElementById("su-pass") as HTMLInputElement | null;
+  const bar = document.getElementById("pw-bar");
+  const word = document.getElementById("pw-word");
+  pass?.addEventListener("input", () => {
+    const v = pass.value;
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (v.length >= 12) score++;
+    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+    if (/\d/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    const pct = [0, 22, 44, 62, 82, 100][Math.min(score, 5)];
+    const label = v.length === 0 ? "minimum 8" : score <= 1 ? "slabă" : score <= 3 ? "acceptabilă" : "bună";
+    const color = v.length === 0 ? "var(--color-line-strong)" : score <= 1 ? "var(--color-sale)" : score <= 3 ? "var(--color-brass)" : "var(--color-jade)";
+    if (bar) { bar.style.width = pct + "%"; bar.style.backgroundColor = color; }
+    if (word) word.textContent = label;
+  });
+
+  // validare + trimitere demo
+  function fail(input: HTMLElement, text: string) {
+    const holder = input.closest(".flex.flex-col, label")?.parentElement ?? input.parentElement;
+    const p = (input.closest(".flex.flex-col") ?? holder)?.querySelector<HTMLElement>(".err")
+           ?? holder?.querySelector<HTMLElement>(".err");
+    if (p) { p.textContent = text; p.hidden = false; }
+    input.classList.add("!border-sale");
+  }
+  function clearErrors(form: HTMLFormElement) {
+    form.querySelectorAll<HTMLElement>(".err").forEach((e) => { e.hidden = true; e.textContent = ""; });
+    form.querySelectorAll<HTMLElement>(".acc-input").forEach((e) => e.classList.remove("!border-sale"));
+  }
+
+  document.querySelectorAll<HTMLFormElement>(".acc-panel").forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      clearErrors(form);
+      let ok = true;
+
+      const email = form.querySelector<HTMLInputElement>('input[type="email"]');
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value)) { fail(email, "Scrie o adresă de e-mail validă."); ok = false; }
+
+      const pw = form.querySelector<HTMLInputElement>('input[type="password"]');
+      const min = Number(pw?.minLength ?? 6);
+      if (pw && pw.value.length < min) { fail(pw, `Parola are nevoie de cel puțin ${min} caractere.`); ok = false; }
+
+      const name = form.querySelector<HTMLInputElement>('input[name="name"]');
+      if (name && name.value.trim().length < 2) { fail(name, "Scrie-ți numele."); ok = false; }
+
+      const phone = form.querySelector<HTMLInputElement>('input[name="phone"]');
+      if (phone && phone.value.replace(/\D/g, "").length < 9) { fail(phone, "Scrie un număr de telefon valid."); ok = false; }
+
+      const terms = form.querySelector<HTMLInputElement>('input[name="terms"]');
+      if (terms && !terms.checked) {
+        const p = terms.closest("label")?.nextElementSibling as HTMLElement | null;
+        if (p?.classList.contains("err")) { p.textContent = "Bifează că ești de acord cu termenii."; p.hidden = false; }
+        ok = false;
+      }
+
+      if (!ok) { form.querySelector<HTMLElement>(".acc-input.\\!border-sale")?.focus(); return; }
+
+      // TODO(real): aici se cheamă Medusa / Supabase Auth
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      const msg = form.querySelector<HTMLElement>(".msg");
+      const label = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Se verifică...";
+      window.setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = label;
+        if (msg) {
+          msg.textContent = form.id === "panel-login"
+            ? "Datele sunt valide. În demo nu există încă server de autentificare."
+            : "Contul ar fi fost creat. În demo nu există încă server de autentificare.";
+          msg.hidden = false;
+        }
+      }, 850);
+    });
+  });
+
+  document.getElementById("forgot")?.addEventListener("click", () => {
+    const msg = document.querySelector<HTMLElement>("#panel-login .msg");
+    if (msg) { msg.textContent = "Îți trimitem un link de resetare pe e-mail. Se leagă la implementarea reală."; msg.hidden = false; }
+  });
+</script>

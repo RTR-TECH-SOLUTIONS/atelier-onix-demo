@@ -1,0 +1,113 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { PRODUCTS, lei } from "../data/products";
+const giftables = PRODUCTS.filter((p) => p.occasion.includes("Protocol"));
+import { u } from "../lib/url";
+---
+<Layout
+  title="Cadouri corporate din onix, gravate cu logo | Atelier Onix"
+  description="Cadouri de protocol din onix natural, gravate pe bază cu logo sau nume. Comandă minimă 10 bucăți, exemplar de probă înainte de serie.">
+
+  <section class="relative border-b border-line overflow-hidden">
+    <img src={u("/img/textura-onix.png")} alt="" aria-hidden="true" width="1800" height="771"
+      class="absolute inset-0 w-full h-full object-cover opacity-[0.22]" />
+    <div class="relative u-wrap py-12 lg:py-16 text-center">
+      <p class="u-eyebrow">Pentru firme</p>
+      <h1 class="mt-3 text-[clamp(1.9rem,4.4vw,2.9rem)]">Cadouri de protocol din piatră</h1>
+      <p class="mt-3.5 mx-auto max-w-[60ch] text-[15.5px] leading-relaxed text-ink-soft">
+        Un obiect din onix stă pe birou ani întregi, spre deosebire de un pix inscripționat.
+        Gravăm pe bază numele sau logo-ul și livrăm fiecare piesă în cutie separată.
+      </p>
+    </div>
+  </section>
+
+  <section class="u-wrap mt-12 lg:mt-16">
+    <h2 class="text-[clamp(1.4rem,2.8vw,1.95rem)]">Cum decurge o comandă</h2>
+    <ol class="mt-7 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4 counter-reset">
+      <li class="flex flex-col gap-2">
+        <span class="font-[family-name:var(--font-display)] text-[15px] text-jade">Pasul 1</span>
+        <p class="text-[15px] font-medium">Ne spuneți cantitatea și bugetul</p>
+        <p class="text-[14px] leading-relaxed text-ink-soft">Minimum 10 bucăți. Vă trimitem în aceeași zi 3 variante care intră în buget.</p>
+      </li>
+      <li class="flex flex-col gap-2">
+        <span class="font-[family-name:var(--font-display)] text-[15px] text-jade">Pasul 2</span>
+        <p class="text-[15px] font-medium">Trimitem un exemplar de probă</p>
+        <p class="text-[14px] leading-relaxed text-ink-soft">Cu gravura finală, ca să vedeți cum cade pe piatră înainte să executăm seria.</p>
+      </li>
+      <li class="flex flex-col gap-2">
+        <span class="font-[family-name:var(--font-display)] text-[15px] text-jade">Pasul 3</span>
+        <p class="text-[15px] font-medium">Executăm seria</p>
+        <p class="text-[14px] leading-relaxed text-ink-soft">Trei săptămâni pentru 50 de bucăți. Alegem blocurile ca piesele să fie cât mai apropiate între ele.</p>
+      </li>
+      <li class="flex flex-col gap-2">
+        <span class="font-[family-name:var(--font-display)] text-[15px] text-jade">Pasul 4</span>
+        <p class="text-[15px] font-medium">Livrăm ambalat individual</p>
+        <p class="text-[14px] leading-relaxed text-ink-soft">Fiecare piesă în cutia ei, cu felicitare dacă ne trimiteți textul. Factură cu TVA.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="u-wrap mt-14 lg:mt-20">
+    <h2 class="text-[clamp(1.4rem,2.8vw,1.95rem)]">Piesele cele mai cerute pentru protocol</h2>
+    <ul class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {giftables.map((g) => (
+        <li class="border border-line bg-surface p-4 flex gap-4" style="border-radius:var(--radius-stone)">
+          <img src={u(g.image)} alt="" width="110" height="138" loading="lazy" decoding="async"
+            class="w-[110px] h-[138px] object-cover shrink-0" style="border-radius:var(--radius-stone)" />
+          <div class="min-w-0 flex flex-col gap-1.5">
+            <p class="text-[14px] leading-snug">{g.name}</p>
+            <p class="u-price text-[15px] tabular-nums">{lei(g.price)} <span class="text-[12.5px] text-ink-faint">/ buc</span></p>
+            <p class="mt-auto text-[12.5px] text-ink-soft">Gravură inclusă de la 25 buc.</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="u-wrap mt-14 lg:mt-20">
+    <div class="border border-line bg-surface px-6 sm:px-10 py-10 grid lg:grid-cols-2 gap-8 lg:gap-14" style="border-radius:var(--radius-stone)">
+      <div class="max-w-[46ch]">
+        <h2 class="text-[clamp(1.3rem,2.5vw,1.8rem)]">Cereți o ofertă</h2>
+        <p class="mt-3.5 text-[15.5px] leading-relaxed text-ink-soft">
+          Răspundem în aceeași zi lucrătoare, cu preț pe bucată la cantitatea cerută și termen exact.
+          Dacă vă e mai comod, scrieți-ne direct pe WhatsApp.
+        </p>
+        <a href="https://wa.me/40722319593" class="u-btn u-btn--ghost mt-6">Scrie pe WhatsApp</a>
+      </div>
+
+      <form id="rfq" class="flex flex-col gap-3.5">
+        <div class="grid sm:grid-cols-2 gap-3.5">
+          <div class="flex flex-col gap-1.5">
+            <label for="company" class="text-[13px] text-ink-soft">Compania</label>
+            <input id="company" name="company" required class="bg-ground border border-line-strong px-3 py-2.5 text-[15px] focus:outline-none focus:border-ink" style="border-radius:var(--radius-stone)" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="qty" class="text-[13px] text-ink-soft">Câte bucăți</label>
+            <input id="qty" name="qty" type="number" min="10" value="25" required class="bg-ground border border-line-strong px-3 py-2.5 text-[15px] tabular-nums focus:outline-none focus:border-ink" style="border-radius:var(--radius-stone)" />
+          </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="email" class="text-[13px] text-ink-soft">E-mail</label>
+          <input id="email" name="email" type="email" required class="bg-ground border border-line-strong px-3 py-2.5 text-[15px] focus:outline-none focus:border-ink" style="border-radius:var(--radius-stone)" />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="msg" class="text-[13px] text-ink-soft">Ce aveți în minte</label>
+          <textarea id="msg" name="msg" rows="4" class="bg-ground border border-line-strong px-3 py-2.5 text-[15px] leading-relaxed focus:outline-none focus:border-ink" style="border-radius:var(--radius-stone)" placeholder="Buget pe bucată, termen, dacă vreți gravură cu logo..."></textarea>
+        </div>
+        <button type="submit" class="u-btn u-btn--solid self-start">Trimite cererea</button>
+        <p id="rfq-msg" hidden class="text-[14px] text-jade">Am primit cererea. Vă răspundem în aceeași zi lucrătoare.</p>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // TODO(real): trimitere prin Resend + notificare pe WhatsApp Business
+  const f = document.getElementById("rfq") as HTMLFormElement | null;
+  f?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const m = document.getElementById("rfq-msg");
+    if (m) m.hidden = false;
+    f.reset();
+  });
+</script>

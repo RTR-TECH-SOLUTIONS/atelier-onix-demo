@@ -1,0 +1,106 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { u } from "../lib/url";
+---
+<Layout
+  title="Despre onix · Cum alegem și lucrăm piatra | Atelier Onix"
+  description="De unde vine onixul nostru, cum se taie un bloc, prin câte granulații trece șlefuirea și cum se întreține o piesă din onix.">
+
+  <section class="relative border-b border-line overflow-hidden">
+    <img src={u("/img/textura-onix.png")} alt="" aria-hidden="true" width="1800" height="771"
+      class="absolute inset-0 w-full h-full object-cover opacity-[0.22]" />
+    <div class="relative u-wrap py-12 lg:py-16 text-center">
+      <p class="u-eyebrow">Materialul</p>
+      <h1 class="mt-3 text-[clamp(1.9rem,4.4vw,2.9rem)]">Despre onix</h1>
+      <p class="mt-3.5 mx-auto max-w-[58ch] text-[15.5px] leading-relaxed text-ink-soft">
+        Ce este, de ce lasă lumina să treacă și de ce nu vă putem trimite două piese identice.
+      </p>
+    </div>
+  </section>
+
+  <div class="u-wrap mt-12 lg:mt-16 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] gap-10 lg:gap-16 items-start">
+    <div class="max-w-[66ch] flex flex-col gap-10">
+
+      <section>
+        <h2 class="text-[clamp(1.3rem,2.5vw,1.75rem)]">De unde vine</h2>
+        <div class="mt-4 flex flex-col gap-4 text-[16px] leading-relaxed text-ink-soft">
+          <p>
+            Lucrăm onix verde din zona Chagai, în Balochistan. Acolo piatra are banda de caramel cea mai
+            pronunțată și un verde care nu vira spre gri după lustruire, cum se întâmplă la materialul mai ieftin.
+          </p>
+          <p>
+            Cumpărăm în blocuri, nu în plăci gata tăiate. Costă mai mult și ține mai mult, dar e singurul mod în
+            care putem tăia un blat și piciorul lui din aceeași bucată, ca desenul să continue.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-[clamp(1.3rem,2.5vw,1.75rem)]">De ce e translucid</h2>
+        <div class="mt-4 flex flex-col gap-4 text-[16px] leading-relaxed text-ink-soft">
+          <p>
+            Onixul e o rocă formată prin depunere lentă de carbonat de calciu, strat peste strat, în peșteri.
+            Cristalele se așază paralel, iar lumina trece printre ele în loc să se oprească la suprafață.
+          </p>
+          <p>
+            La un perete de 12 mm, cât are peretele unei vaze, se vede clar sursa de lumină prin piatră. La 20 mm,
+            cât are un blat, se vede doar o îmblânzire caldă a culorii când soarele cade oblic. E motivul pentru care
+            recomandăm să puneți piesele lângă o fereastră, nu în mijlocul camerei.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-[clamp(1.3rem,2.5vw,1.75rem)]">Șapte granulații</h2>
+        <div class="mt-4 flex flex-col gap-4 text-[16px] leading-relaxed text-ink-soft">
+          <p>
+            Șlefuirea urcă de la 60 la 3000. Primele trepte scot urmele de la disc, următoarele închid porii,
+            iar ultimele două se fac manual, cu apă. Mașina scurtează timpul, dar rotunjește muchia, iar la onix
+            muchia vie e jumătate din efect.
+          </p>
+          <p>
+            După lustruire nu aplicăm ceară și nici rășină. Luciul pe care îl vedeți e piatra, nu un strat peste ea.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-[clamp(1.3rem,2.5vw,1.75rem)]">Cum se întreține</h2>
+        <ul class="mt-4 flex flex-col gap-3 text-[16px] leading-relaxed text-ink-soft">
+          <li class="grid grid-cols-[auto_1fr] gap-3"><span class="mt-[0.62em] w-1.5 h-1.5 bg-jade shrink-0"></span>Ștergeți cu o cârpă moale umezită. Fără detergent acid, fără oțet, fără soluții de geamuri.</li>
+          <li class="grid grid-cols-[auto_1fr] gap-3"><span class="mt-[0.62em] w-1.5 h-1.5 bg-jade shrink-0"></span>Lichidele colorate, cafea sau vin roșu, se șterg imediat. Piatra e poroasă și lasă inel dacă stau peste noapte.</li>
+          <li class="grid grid-cols-[auto_1fr] gap-3"><span class="mt-[0.62em] w-1.5 h-1.5 bg-jade shrink-0"></span>Nu puneți vase fierbinți direct pe blat. Nu crapă, dar mătuiește luciul în timp.</li>
+          <li class="grid grid-cols-[auto_1fr] gap-3"><span class="mt-[0.62em] w-1.5 h-1.5 bg-jade shrink-0"></span>O dată pe an, dacă doriți, se poate reface luciul în atelier. Durează două zile și costă mult sub prețul unei piese noi.</li>
+        </ul>
+      </section>
+
+      <div class="u-vein"></div>
+
+      <div>
+        <p class="text-[16px] leading-relaxed text-ink-soft max-w-[58ch]">
+          Vreți să vedeți blocurile înainte să comandați? Veniți la showroom în Otopeni, sau scrieți-ne și vă
+          trimitem fotografii cu blocurile aflate în lucru săptămâna asta.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="https://wa.me/40722319593" class="u-btn u-btn--solid">Scrie pe WhatsApp</a>
+          <a href={u("/colectie")} class="u-btn u-btn--ghost">Vezi catalogul</a>
+        </div>
+      </div>
+    </div>
+
+    <aside class="lg:sticky lg:top-[180px] flex flex-col gap-4">
+      <figure>
+        <img src={u("/img/atelier.png")} alt="Bloc de onix verde pe jumătate lustruit, pe bancul de lucru"
+          width="1152" height="864" loading="lazy" decoding="async"
+          class="w-full aspect-[4/3] object-cover" style="border-radius:var(--radius-stone)" />
+        <figcaption class="mt-2.5 text-[13px] text-ink-faint">Același bloc, jumătate brut și jumătate lustruit. Diferența de culoare vine doar din finisaj.</figcaption>
+      </figure>
+      <dl class="border-t border-line text-[14.5px]">
+        <div class="grid grid-cols-2 gap-3 py-2.5 border-b border-line"><dt class="text-ink-faint">Duritate Mohs</dt><dd class="tabular-nums">3 - 4</dd></div>
+        <div class="grid grid-cols-2 gap-3 py-2.5 border-b border-line"><dt class="text-ink-faint">Densitate</dt><dd class="tabular-nums">2,6 - 2,9 g/cm³</dd></div>
+        <div class="grid grid-cols-2 gap-3 py-2.5 border-b border-line"><dt class="text-ink-faint">Origine</dt><dd>Chagai, Balochistan</dd></div>
+        <div class="grid grid-cols-2 gap-3 py-2.5 border-b border-line"><dt class="text-ink-faint">Finisaj</dt><dd>Lustruit, fără ceară</dd></div>
+      </dl>
+    </aside>
+  </div>
+</Layout>

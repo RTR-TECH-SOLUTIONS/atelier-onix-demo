@@ -1,0 +1,44 @@
+---
+import { lei, type Product } from "../data/products";
+interface Props { p: Product; eager?: boolean; }
+const { p, eager = false } = Astro.props;
+const off = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+import { u } from "../lib/url";
+---
+<article class="group flex flex-col h-full">
+  <a href={u(`/produs/${p.slug}`)} class="relative block bg-surface overflow-hidden" style="border-radius:var(--radius-stone)">
+    <div class="absolute top-0 left-0 z-10 flex flex-col items-start">
+      {off > 0 && <span class="bg-sale text-white text-[11px] font-semibold tracking-wide px-2 py-1">−{off}%</span>}
+      {p.new && <span class="bg-ink text-ground text-[11px] font-semibold tracking-wide px-2 py-1">Nou</span>}
+    </div>
+    <img src={u(p.image)} alt={p.name} width="600" height="750"
+      loading={eager ? "eager" : "lazy"} decoding="async"
+      class="w-full aspect-[4/5] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]" />
+  </a>
+
+  <div class="pt-3.5 flex flex-col gap-1.5 flex-1">
+    <h3 class="font-[family-name:var(--font-sans)] text-[14px] leading-snug font-normal">
+      <a href={u(`/produs/${p.slug}`)} class="hover:text-jade transition-colors">{p.name}</a>
+    </h3>
+
+    <p class="tabular-nums">
+      {p.oldPrice && <span class="u-price--old">{lei(p.oldPrice)}</span>}
+      <span class="u-price">{lei(p.price)}</span>
+    </p>
+
+    <p class="text-[12px] tracking-[0.08em] uppercase flex items-center gap-1.5">
+      {p.stock === "stoc" ? (
+        <><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="text-jade shrink-0"><path d="M2 6.2 4.6 8.8 10 3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg><span class="text-jade">În stoc</span></>
+      ) : (
+        <><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="text-brass shrink-0"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.4V6l1.8 1.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="square"/></svg><span class="text-brass">La comandă · {p.leadTime}</span></>
+      )}
+    </p>
+
+    <button type="button"
+      class="u-btn u-btn--ghost mt-auto w-full !px-3 !py-2.5 !text-[12px] group-hover:border-ink"
+      data-add-to-cart data-slug={p.slug} data-name={p.name} data-price={p.price} data-image={u(p.image)}
+      data-label="Adaugă în coș">
+      Adaugă în coș
+    </button>
+  </div>
+</article>
